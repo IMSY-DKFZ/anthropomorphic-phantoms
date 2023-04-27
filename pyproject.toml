@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "tmd "
+version = "0.0.1"
+description = "Tissue-mimicking dye mixtures"
+authors = []
+license = ""
+readme = "README.md"
+# requires-python = ">=3.7"
+keywords = []
+
+# Requirements
+[tool.poetry.dependencies]
+python = ">=3.8,<3.11"
+matplotlib = ">=3.5.0"       # Uses PSF-License (MIT compatible)
+numpy = ">=1.21.4"           # Uses BSD-License (MIT compatible)
+simpa = ">=0.8.11"            # Uses BSD-like-License (MIT compatible)
+sympy = ">=1.7.1"
+
+[tool.poetry.group.docs.dependencies]
+sphinx-rtd-theme = "^1.0.0"
+Sphinx = "^5.1.1"
+myst-parser = "^0.18.0"
+
+[build-system]
+requires = [
+    "poetry >= 0.12"
+]
+build-backend = "poetry.masonry.api"
