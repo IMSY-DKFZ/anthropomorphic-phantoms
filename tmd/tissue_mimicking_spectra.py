@@ -36,7 +36,7 @@ combinations = list(combinations(list(chromophore_spectra_dict.keys()), 22))
 
 for permutation in combinations:
     perm_dict = OrderedDict({key: chromophore_spectra_dict[key] for key in permutation})
-    result = linear_spectral_unmixing(target_spectrum, perm_dict, non_negativity_constraint=True, weighted_optimization=True)
+    result = linear_spectral_unmixing(target_spectrum, perm_dict, non_negativity_constraint=True, weighted_optimization=False)
 
     # print(result)
     # result /= np.linalg.norm(result, ord=1)
