@@ -69,12 +69,13 @@ class DyeConcentrationOptimizer(nn.Module):
         return out
 
     def loss(self, prediction, target):
-        pred_der = self.derive(prediction)
-        target_der = self.derive(target)
-        derivative_loss = F.l1_loss(pred_der, target_der)
-        derivative_2_loss = F.l1_loss(self.derive(pred_der), self.derive(target_der))
-        abs_loss = F.mse_loss(prediction, target)
-        return abs_loss + 2*derivative_loss + 4*derivative_2_loss
+        # pred_der = self.derive(prediction)
+        # target_der = self.derive(target)
+        # derivative_loss = F.l1_loss(pred_der, target_der)
+        # derivative_2_loss = F.l1_loss(self.derive(pred_der), self.derive(target_der))
+        abs_loss = torch.sqrt(F.mse_loss(prediction, target))
+        l1_loss = F.l1_loss(prediction, target)
+        return abs_loss + l1_loss #+ 2*derivative_loss + 4*derivative_2_loss
 
     def train_loop(self, input_spectra, target_spectrum):
         losses = []
@@ -103,7 +104,7 @@ plt.close()
 preds = m(input_spectra)
 preds = preds.detach().numpy()
 plt.figure(figsize=(14, 7))
-plt.plot(target_spectrum.numpy())
-plt.plot(preds)
+plt.semilogy(target_spectrum.numpy())
+plt.semilogy(preds)
 plt.show()
 plt.close()
