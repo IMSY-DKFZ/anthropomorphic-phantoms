@@ -7,7 +7,8 @@ from collections import OrderedDict
 def linear_spectral_unmixing(data_to_unmix: np.array,
                              endmembers_dictionary: OrderedDict,
                              non_negativity_constraint: bool = True,
-                             return_type="array"):
+                             return_type="array",
+                             weighted_optimization: bool = False):
     """Runs linear unmixing for a spectrum with specific endmember options
 
     :param data_to_unmix: target data
@@ -16,6 +17,9 @@ def linear_spectral_unmixing(data_to_unmix: np.array,
     :param return_type: either 'dict' or 'array'
     :return: either dictionary with endmember names as keys or an array in the same order as the endmembers dict
     """
+
+    if weighted_optimization:
+        data_to_unmix /= np.max(data_to_unmix)
 
     absorption_matrix = np.stack(list(endmembers_dictionary.values())).T
 

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import simpa as sp
-from tmd.load_iad_results import load_iad_results
+from tmd.utils.io_iad_results import load_iad_results
 import os
 
 
