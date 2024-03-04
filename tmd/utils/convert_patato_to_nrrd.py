@@ -21,4 +21,4 @@ def convert_patato_output_to_nrrd(file_path):
 
 
 if __name__ == "__main__":
-    convert_patato_output_to_nrrd("/home/kris/Work/Data/TMD/KrisPhantoms_01_IPASC/Scan_5.hdf5")
+    convert_patato_output_to_nrrd("/home/kris/Data/Dye_project/phantom_data/KrisPhantoms_01_processed/Scan_9.hdf5")
