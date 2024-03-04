@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 from tmd.utils.io_iad_results import load_iad_results
 from tmd.linear_unimxing import linear_spectral_unmixing
+from tmd.data.load_icg_absorption import load_icg
 from collections import OrderedDict
 import simpa as sp
 import os
 
-unmixing_wavelengths = np.arange(750, 850)
-target_spectrum_name = "HbO2"
+unmixing_wavelengths = np.arange(700, 850)
+target_spectrum_name = "Hb"
 
 
 class NamedSlider(Slider):
@@ -53,13 +54,19 @@ target_spectra = {
     "Water": water_spectrum,
 }
 
-target_spectrum = 100*np.interp(unmixing_wavelengths, wavelengths, target_spectra[target_spectrum_name])
+target_spectrum = np.interp(unmixing_wavelengths, wavelengths, target_spectra[target_spectrum_name])
 
-dye_spectra_dir = "/home/kris/Work/Data/TMD/DyeSpectra/Measured_Spectra"
+icg_wl, icg_mua = load_icg()
+icg_mua = np.interp(unmixing_wavelengths, icg_wl, icg_mua)
+
+dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
 example_spectra = os.listdir(dye_spectra_dir)
 
 chromophore_spectra_dict = OrderedDict()
+chromophore_spectra_dict["ICG"] = icg_mua
 for example_spectrum in example_spectra:
+    if "B15" not in example_spectrum:
+        continue
     abs_spectrum = load_iad_results(os.path.join(dye_spectra_dir, example_spectrum))["mua"]
     chromophore_spectra_dict[example_spectrum.split(".")[0]] = np.interp(unmixing_wavelengths, np.arange(650, 950), abs_spectrum)
 
@@ -85,11 +92,17 @@ ax.set_xlabel("Wavelength [nm]")
 slider_dict = {}
 for c_idx, (chromophore_name, chromophore_value) in enumerate(chromophore_spectra_dict.items()):
     slider_axis = fig.add_axes([0.8, 0.05 + c_idx*0.05, 0.15, 0.03])
+    if chromophore_name == "ICG":
+        valmx = 1e-4
+        valstep = 1e-3
+    else:
+        valmx = 10
+        valstep = 0.01
     concentration_slider = NamedSlider(ax=slider_axis,
                                        label=f"Concentration of {chromophore_name}",
                                        valmin=0,
-                                       valmax=100,
-                                       valstep=0.01,
+                                       valmax=valmx,
+                                       valstep=valstep,
                                        valinit=lsu_result[c_idx],
                                        name=chromophore_name
                                        )
