@@ -9,7 +9,7 @@ def generate_tissue_spectra(nr_of_spectra: int,
                             wavelength_range: np.ndarray,
                             max_number_of_mixed_spectra: int = 5,
                             plot_spectra: bool = False) -> list:
-    """Mixes multiple tissue spectra from the simpa library in order to create new tissue-based spectra.
+    """Mixes multiple tissue spectra from the simpa_recons library in order to create new tissue-based spectra.
 
     :param nr_of_spectra: number opf spectra that should be returned
     :param wavelength_range: numpy array with the exact wavelengths that should be used to create the spectra
@@ -25,7 +25,7 @@ def generate_tissue_spectra(nr_of_spectra: int,
     for i in range(nr_of_spectra):
         # randomly draw the number of how many spectra should be used for the mixing
         nr_of_randomly_selected_tissue_spectra = np.random.randint(2, max_number_of_mixed_spectra)
-        # randomly draw spectra from the simpa library
+        # randomly draw spectra from the simpa_recons library
         randomly_selected_tissue_spectra = np.random.choice(abs_spectra.spectra, nr_of_randomly_selected_tissue_spectra,
                                                             replace=False)
 
