@@ -179,12 +179,12 @@ deoxy_dict = {
     0.8: spectrum_BJ8,
     0.9: spectrum_BJ9,
 }
-plt.figure(figsize=(7, 5))
+plt.figure(figsize=(5.3, 4.05))
 # plt.subplot(1, 2, 1)
 # plt.plot(unmixing_wavelengths, oxy*hbo2_spectrum + (1-oxy)*hb_spectrum, label=f"real blood {100*oxy}%", color="red")
 # plt.plot(unmixing_wavelengths, oxy_phantoms[oxy], label=f"{100*oxy:.0f}:{100*(1-oxy):.0f} mix measured")
 # plt.plot(unmixing_wavelengths, oxy_dict[oxy] + deoxy_dict[oxy], label=f"phantom mix {100*oxy}%", color=DyeColors["B30"], linestyle=":")
-# plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO2", color="red")
+plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO2", color="red")
 # plt.plot(unmixing_wavelengths, spectrum_BJ6, label="IR-1061 (60%)", color=DyeColors["B30"], alpha=0.3)
 # plt.plot(unmixing_wavelengths, spectrum_BJ7, label="IR-1061 (70%)", color=DyeColors["B30"], alpha=0.5)
 # plt.plot(unmixing_wavelengths, spectrum_BJ8, label="IR-1061 (80%)", color=DyeColors["B30"], alpha=0.7)
@@ -210,7 +210,7 @@ plt.plot(unmixing_wavelengths, spectrum_BIR3, label="HbO2 dye (IR-1061)", color=
 # plt.plot(unmixing_wavelengths, 0.6*hb_spectrum + 0.4*hbo2_spectrum, color="#bc00ff", linestyle="--")
 # plt.plot(unmixing_wavelengths, 0.8*hb_spectrum + 0.2*hbo2_spectrum, color="#6600ff", linestyle="--")
 #
-# plt.plot(unmixing_wavelengths, hb_spectrum, label="Hb", color="blue")
+plt.plot(unmixing_wavelengths, hb_spectrum, label="Hb", color="blue")
 # plt.plot(unmixing_wavelengths, 3.185*spectrum_B42 + 0.826*spectrum_B43, label="Hb-Dye (3.185*IR-1043 + 0.826*Spectrasense)", linestyle="--", color="teal")
 plt.plot(unmixing_wavelengths, spectrum_BS0, label="Hb-dye (Spectrasense-765)", color="teal")
 # plt.plot(unmixing_wavelengths, spectrum_BR4, label="Spectrasense (40%)", color="teal", alpha=2*0.4)
@@ -238,15 +238,15 @@ plt.plot(unmixing_wavelengths, spectrum_BS0, label="Hb-dye (Spectrasense-765)", 
 # plt.plot(unmixing_wavelengths, spectrum_BF10B, label="Forearm 10B: bvf: 5%, oxy: 0% (B95)", color="blue", alpha=1)
 # plt.plot(unmixing_wavelengths, spectrum_BF10C, label="Forearm 10C: bvf: 3%, oxy: 70% (B90)", color="#ff007a", alpha=0.9)
 
-plt.plot(unmixing_wavelengths, 0.03*spectrum_BIR3 + 0.97*spectrum_BS0, color="#34615C", linestyle="--")
-plt.plot(unmixing_wavelengths, 0.08*spectrum_BIR3 + 0.92*spectrum_BS0, color="#53665b", linestyle="--")
-plt.plot(unmixing_wavelengths, 0.15*spectrum_BIR3 + 0.85*spectrum_BS0, color="#735a4d", linestyle="--")
-plt.plot(unmixing_wavelengths, 0.4*spectrum_BIR3 + 0.6*spectrum_BS0, color="#3a1f16", linestyle="--")
+# plt.plot(unmixing_wavelengths, 0.03*spectrum_BIR3 + 0.97*spectrum_BS0, color="#34615C", linestyle="--")
+# plt.plot(unmixing_wavelengths, 0.08*spectrum_BIR3 + 0.92*spectrum_BS0, color="#53665b", linestyle="--")
+# plt.plot(unmixing_wavelengths, 0.15*spectrum_BIR3 + 0.85*spectrum_BS0, color="#735a4d", linestyle="--")
+# plt.plot(unmixing_wavelengths, 0.4*spectrum_BIR3 + 0.6*spectrum_BS0, color="#3a1f16", linestyle="--")
 
 plt.ylim([1.147, 10.013])
 plt.ylabel("Absorption coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
-plt.legend()
+plt.legend(fancybox=True, framealpha=0)
 # plt.subplot(1, 2, 1)
 # plt.plot(unmixing_wavelengths, 5*0.156*spectrum_B50 + 0.8*spectrum_B56, label="16:84 mix Sp(c=1):Nigrosin (separately)", color="#2c3e50", linestyle="--")
 # # plt.plot(unmixing_wavelengths, spectrum_B50, label="Spectrasense", color="teal")
@@ -262,7 +262,7 @@ plt.legend()
 
 
 plt.tight_layout()
-plt.savefig(f"/home/kris/Data/Dye_project/Plots/spectrum_comparison.png", dpi=400)
+plt.savefig(f"/home/kris/Data/Dye_project/Plots/spectrum_comparison.png", dpi=400, transparent=True)
 plt.close()
 
 
