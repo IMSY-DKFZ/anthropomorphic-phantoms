@@ -19,6 +19,10 @@ plt.figure(figsize=(12, 8))
 # target_spectrum = np.interp(np.arange(650, 951), wavelengths, hb_spectrum)
 # plt.subplot(1, 2, 1)
 # plt.semilogy(np.arange(650, 951), target_spectrum, color="blue", label="Hb")
+
+
+excluded_phantoms = [f"BF{i}" for i in range(1, 10)] + ["BF10A", "BF10B", "BF10C", "BIR", "B90", "B93", "B95", "B97"]
+
 for file in spectrum_files:
     phantom_name = os.path.basename(file).split(".")[0]
     data_dict = load_iad_results(file_path=file)
@@ -30,11 +34,18 @@ for file in spectrum_files:
     mus_std = data_dict["mus_std"]
     g = data_dict["g"]
 
-    if phantom_name not in ["B43"]:
+    print(phantom_name)
+    try:
+        if int(phantom_name[1:]) >= 46:
+            continue
+    except ValueError:
+        pass
+    if any(substring in phantom_name for substring in ["BF", "BJ", "BI", "B9", "BR", "BS", "B40", "B41", "B31", "39", "B38"]):
         continue
 
     linestyle = "-"
-    if phantom_name in ["BJG", "B30"]:
+    alpha = 0.5
+    if phantom_name not in ["B43", "B30"]:
         linestyle = "--"
 
     plt.subplot(1, 2, 1)
