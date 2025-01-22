@@ -5,11 +5,12 @@ from tmd.utils.io_iad_results import load_iad_results
 import matplotlib.pyplot as plt
 import simpa as sp
 import numpy as np
-# plt.style.use('bmh')
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
 
-dye_base_dir = "/home/kris/Work/Data/TMD/DyeSpectra/Measured_Spectra"
-spectrum_files = glob.glob(os.path.join(dye_base_dir, "*.npz"))
-plt.figure(figsize=(12, 8))
+dye_base_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
+spectrum_files = sorted(glob.glob(os.path.join(dye_base_dir, "*.npz")))
+plt.figure(figsize=(6, 5))
 # hbo2_spectrum, hb_spectrum = sp.get_simpa_internal_absorption_spectra_by_names(
 #     [sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_OXYHEMOGLOBIN, sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_DEOXYHEMOGLOBIN]
 # )
@@ -28,10 +29,12 @@ for file in spectrum_files:
     data_dict = load_iad_results(file_path=file)
 
     wavelengths = data_dict["wavelengths"]
-    mua = data_dict["mua"]
-    mua_std = data_dict["mua_std"]
-    mus = data_dict["mus"]
-    mus_std = data_dict["mus_std"]
+    wl_indices = np.where((wavelengths >= 700) & (wavelengths <= 850))
+    wavelengths = wavelengths[wl_indices]
+    mua = data_dict["mua"][wl_indices]
+    mua_std = data_dict["mua_std"][wl_indices]
+    mus = data_dict["mus"][wl_indices]
+    mus_std = data_dict["mus_std"][wl_indices]
     g = data_dict["g"]
 
     print(phantom_name)
@@ -47,30 +50,36 @@ for file in spectrum_files:
     alpha = 0.5
     if phantom_name not in ["B43", "B30"]:
         linestyle = "--"
+        alpha = 0.3
 
-    plt.subplot(1, 2, 1)
+    # plt.subplot(1, 2, 1)
     ax = plt.gca()
+    ax.set_yscale("log", base=10)
     # ax.set_facecolor("lightgrey")
-    plt.plot(wavelengths, mua, color=DyeColors[phantom_name], label=f"{phantom_name} ({DyeNames[phantom_name]})",
-                 linestyle=linestyle)
-    plt.title("Optical absorption")
-    plt.fill_between(wavelengths, mua, mua + mua_std, color=DyeColors[phantom_name], alpha=0.5)
-    plt.fill_between(wavelengths, mua, mua - mua_std, color=DyeColors[phantom_name], alpha=0.5)
+    # plt.plot(wavelengths, mua, color=DyeColors[phantom_name], label=f"{phantom_name} {DyeNames[phantom_name]}",
+    #          linestyle=linestyle)
+    plt.plot(wavelengths, mua, color=DyeColors[phantom_name], label=f"{DyeNames[phantom_name]}",
+             linestyle=linestyle)
+    # plt.title("Optical absorption")
+    plt.fill_between(wavelengths, mua, mua + mua_std, color=DyeColors[phantom_name], alpha=alpha)
+    plt.fill_between(wavelengths, mua, mua - mua_std, color=DyeColors[phantom_name], alpha=alpha)
     plt.ylabel("Absorption coefficient $\mu_a$ [$cm^{-1}$]")
     plt.xlabel("Wavelength [nm]")
-    plt.legend()
+    plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=8, fancybox=True, frameon=True, framealpha=0.5)
 
-    plt.subplot(1, 2, 2)
-    ax = plt.gca()
-    # ax.set_facecolor("lightgrey")
-    plt.plot(wavelengths, mus, color=DyeColors[phantom_name], label=f"{phantom_name} ({DyeNames[phantom_name]})",
-                 linestyle=linestyle)
-    plt.title(f"Optical scattering, g={g:.1}")
-    plt.fill_between(wavelengths, mus, mus + mus_std, color=DyeColors[phantom_name], alpha=0.5)
-    plt.fill_between(wavelengths, mus, mus - mus_std, color=DyeColors[phantom_name], alpha=0.5)
-    plt.ylabel("Reduced scattering coefficient $\mu_s'$ [$cm^{{-1}}$]")
-    plt.xlabel("Wavelength [nm]")
-    plt.legend()
+    # plt.subplot(1, 2, 2)
+    # ax = plt.gca()
+    # ax.set_yscale("log", base=10)
+    # # ax.set_facecolor("lightgrey")
+    # plt.plot(wavelengths, mus, color=DyeColors[phantom_name], label=f"{DyeNames[phantom_name]}",
+    #              linestyle=linestyle)
+    # plt.title(f"Optical scattering, g={g:.1}")
+    # plt.fill_between(wavelengths, mus, mus + mus_std, color=DyeColors[phantom_name], alpha=0.5)
+    # plt.fill_between(wavelengths, mus, mus - mus_std, color=DyeColors[phantom_name], alpha=0.5)
+    # plt.ylabel("Reduced scattering coefficient $\mu_s'$ [$cm^{{-1}}$]")
+    # plt.xlabel("Wavelength [nm]")
+    # plt.legend()
 
 plt.tight_layout()
-plt.savefig("/home/kris/Work/Data/TMD/Plots/Spectrasense.png")
+plt.savefig("/home/kris/Data/Dye_project/Plots/all_spectra_absorption.png", dpi=300, bbox_inches="tight")
+# plt.show()
