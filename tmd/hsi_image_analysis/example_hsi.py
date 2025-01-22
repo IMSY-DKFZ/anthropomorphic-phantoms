@@ -11,13 +11,14 @@ from tmd.linear_unimxing import unmix_so2_proxy
 from tmd.utils.io_iad_results import load_iad_results
 
 from scipy.stats import linregress
+import json
 
 examples_images = {
     1: {"oxy": 0.5, "path": "2024_02_20_15_28_13"},
-    # 2: {"oxy": 0.3, "path": f"2024_02_20_15_44_02"},
-    # 3: {"oxy": 0, "path": "2024_02_20_16_12_35"},
-    # 4: {"oxy": 0.7, "path": "2024_02_20_16_24_05"},
-    # 5: {"oxy": 1, "path": "2024_02_20_16_50_30"},
+    2: {"oxy": 0.3, "path": f"2024_02_20_15_44_02"},
+    3: {"oxy": 0, "path": "2024_02_20_16_12_35"},
+    4: {"oxy": 0.7, "path": "2024_02_20_16_24_05"},
+    5: {"oxy": 1, "path": "2024_02_20_16_50_30"},
     # 6: {"oxy": 1, "path": "2024_02_20_17_18_56"},
     # 6: {"oxy": 1, "path": "2024_02_20_15_58_27"},
 }
@@ -48,18 +49,26 @@ for forearm_nr, forearm_specs in examples_images.items():
     labels, _ = nrrd.read(os.path.join(path, f"{forearm_specs['path']}-labels.nrrd"))
     data_shape = labels.shape
 
-    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
-    axes[0].imshow(rgb)
-    # axes[0].imshow(labels, alpha=0.2)
-    # axes[0].contour(training_labels)
+    if len(training_labels.shape) == 3:
+        training_labels = training_labels[:, :, 0]
 
-    axes[0].set_title('Image, mask and ROI boundaries')
-    vessel = hsi[training_labels == 3]
+    fig, axes = plt.subplots(2, 1, figsize=(8, 7))
+    axes[0].imshow(rgb)
+    axes[0].imshow(labels, alpha=0.2)
+    axes[0].contour(training_labels)
+    axes[0].axes.xaxis.set_visible(False)
+    axes[0].axes.yaxis.set_visible(False)
+
+    axes[0].set_title('Image and ROI boundaries')
+    vessel = - np.log10(hsi[training_labels == 3])
     vessel_spectrum = np.mean(vessel, axis=0)
+    vessel_std = np.std(vessel, axis=0)
     hsi_wavelengths = np.arange(500, 1000, 5)
     wavelengths = np.arange(700, 851, 10)
-    vessel_spectrum = np.interp(wavelengths, hsi_wavelengths, vessel_spectrum)
-    absorption = - np.log10(vessel_spectrum)
+    absorption = np.interp(wavelengths, hsi_wavelengths, vessel_spectrum)
+    absorption_std = np.interp(wavelengths, hsi_wavelengths, vessel_std)
+    # absorption = - np.log10(vessel_spectrum)
+    # absorption_std = - np.log10(vessel_std)
 
     hb_abs_spectrum = load_iad_results(os.path.join(measurements_path, "B90.npz"))["mua"]
     hb_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hb_abs_spectrum)
@@ -73,7 +82,10 @@ for forearm_nr, forearm_specs in examples_images.items():
     target_std = load_iad_results(os.path.join(measurements_path, abs_dict[forearm_specs["oxy"]] + ".npz"))["mua_std"]
     target_std = np.interp(wavelengths, np.arange(650, 950), target_std)
 
-    slope, intercept, r_value, p_value, std_err = linregress(target_spectrum, absorption)
+    slope, intercept, r_value, p_value, std_err = linregress(absorption, target_spectrum)
+
+    json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
+              open(path + ".json", "w"))
     print(slope, intercept, r_value, p_value, std_err)
 
     # axes[1].plot(wavelengths, target_spectrum, label="Measured material absorption", color="blue")
@@ -88,23 +100,21 @@ for forearm_nr, forearm_specs in examples_images.items():
     # plt.legend()
 
     axes[1].set_title(
-        f"Target Spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
-        f"{unmix_so2_proxy((absorption - intercept) / slope, wavelengths=wavelengths):.2f} %")
-    axes[1].set_xlabel(f"Absorption Coefficient [$cm^{-1}$]")
-    axes[1].set_ylabel(f"Estimated Absorption Coefficient [$cm^{-1}$]")
-    axes[1].errorbar(target_spectrum, (absorption - intercept) / slope, xerr=target_std, color="green", fmt="o",
-                 barsabove=True,
-                 label=f"Measured PA signal")
-    axes[1].plot(target_spectrum, target_spectrum, color="black",
+        f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
+        f"{unmix_so2_proxy(absorption * slope + intercept, wavelengths=wavelengths):.2f} %")
+    axes[1].set_xlabel(f"HS signal adapted with Lambert-Beer approx. [a.u.]")
+    axes[1].set_ylabel(f"Absorption coefficient [$cm^{-1}$]")
+    axes[1].scatter(absorption, target_spectrum, color="green", label=f"Measured HS signal")
+    axes[1].plot(sorted(absorption), np.array(sorted(absorption)) * slope + intercept, color="black",
              label=f"Correlation (R={r_value:.2f}, p-value={p_value:.2f})")
 
     ins = axes[1].inset_axes((0.7, 0.2, 0.2, 0.2))
-    ins.plot(wavelengths, (absorption - intercept) / slope, color="green")
+    ins.plot(wavelengths, absorption*slope + intercept, color="green")
     ins.plot(wavelengths, target_spectrum, label="Measured material absorption", color="blue")
     ins.fill_between(wavelengths, target_spectrum - target_std,
                      target_spectrum + target_std,
                      alpha=0.2, color="blue")
-    ins.set_title("HSI-estimated $\mu_a$")
+    ins.set_title("HSI approx. for $\mu_a$")
     ins.set_ylabel(f"$\mu_a$ [$cm^{-1}$]")
     ins.set_xlabel("Wavelength [nm]")
 
@@ -120,7 +130,7 @@ for forearm_nr, forearm_specs in examples_images.items():
 
     fig.tight_layout()
 
-    plt.show()
-    exit()
-    # plt.savefig(os.path.join("/home/kris/Pictures/Phantom_Paper_Figures/", f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png"), dpi=300)
-    # plt.close()
+    # plt.show()
+    # exit()
+    plt.savefig(os.path.join("/home/kris/Pictures/Phantom_Paper_Figures/", f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png"), dpi=300)
+    plt.close()
