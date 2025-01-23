@@ -16,10 +16,6 @@ oxy_absorption_std = np.interp(unmixing_wavelengths, np.arange(650, 950), oxy_da
 oxy_scatter_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), oxy_data["mus"])
 oxy_scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), oxy_data["mus_std"])
 
-deoxy_data_orig = load_iad_results(os.path.join(dye_spectra_dir, f"BS0.npz"))
-deoxy_absorption_spectrum_orig = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data_orig["mua"])
-deoxy_absorption_std_orig = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data_orig["mua_std"])
-
 deoxy_data = load_iad_results(os.path.join(dye_spectra_dir, "B90.npz"))
 deoxy_absorption_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data["mua"])
 deoxy_absorption_std = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data["mua_std"])
@@ -46,10 +42,6 @@ scatter_spectrum_B93_std = np.interp(unmixing_wavelengths, np.arange(650, 950), 
 
 
 fig = plt.figure(figsize=(10, 5))
-
-# plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum_orig, label="Hb-dye (Spectrasense-765)", color="teal")
-# plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum_orig - deoxy_absorption_std,
-#                  deoxy_absorption_spectrum_orig + deoxy_absorption_std, color="teal", alpha=0.1)
 
 plt.subplot(1, 2, 1)
 
@@ -107,15 +99,7 @@ plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
 
 plt.ylabel("Scattering coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
-# plt.legend(fancybox=True, framealpha=0, loc="upper right")
 
-# plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="IR-1061", color=DyeColors["B30"])
-# plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
-#                  oxy_scatter_spectrum + oxy_scatter_std, color=DyeColors["B30"], alpha=0.25)
-#
-# plt.ylabel("Scattering coefficient $\mu_s$ [$cm^{-1}$]")
-# plt.xlabel("Wavelength [nm]")
-# plt.legend(fancybox=True, framealpha=0)
 plt.tight_layout()
 plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", "oxy_levels.png"),
             dpi=400, transparent=False, bbox_inches="tight")
