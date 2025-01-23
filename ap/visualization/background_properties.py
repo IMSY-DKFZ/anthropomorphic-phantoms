@@ -5,6 +5,9 @@ import simpa as sp
 import numpy as np
 import os
 
+
+base_path = "/home/kris/Data/Dye_project/publication_data"
+dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
 unmixing_wavelengths = np.arange(700, 855, 10)
 
 hbo2_spectrum, hb_spectrum = sp.get_simpa_internal_absorption_spectra_by_names(
@@ -15,8 +18,6 @@ hb_spectrum, hbo2_spectrum = hb_spectrum.values, hbo2_spectrum.values
 
 hb_spectrum = np.interp(unmixing_wavelengths, wavelengths, hb_spectrum)
 hbo2_spectrum = np.interp(unmixing_wavelengths, wavelengths, hbo2_spectrum)
-
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
 
 background_spectra = {
     "1": {"oxy": 0, "bvf": 2.5},
@@ -93,6 +94,6 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
     if f_idx in [2, 5, 8, 11]:
         ax1.legend(fancybox=True, framealpha=0)
         ax2.legend(fancybox=True, framealpha=0)
-        plt.savefig(f"/home/kris/Data/Dye_project/Plots/forearms_{f_idx-1}_{f_idx+1}.png",
+        plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", f"forearms_{f_idx-1}_{f_idx+1}.png"),
                     dpi=400, transparent=False)
         plt.close()
