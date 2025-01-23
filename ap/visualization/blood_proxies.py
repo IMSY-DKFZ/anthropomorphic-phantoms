@@ -1,9 +1,13 @@
 from ap.utils.io_iad_results import load_iad_results
-from ap.dye_analysis import DyeColors, DyeNames
 import matplotlib.pyplot as plt
 import simpa as sp
 import numpy as np
 import os
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
+
+base_path = "/home/kris/Data/Dye_project/publication_data"
+dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
 
 unmixing_wavelengths = np.arange(700, 855, 1)
 
@@ -18,8 +22,6 @@ hb_spectrum = np.interp(unmixing_wavelengths, wavelengths, hb_spectrum)
 hbo2_spectrum = np.interp(unmixing_wavelengths, wavelengths, hbo2_spectrum)
 blood_scatter = sp.ScatteringSpectrumLibrary().get_spectrum_by_name("blood_scattering")
 blood_scatter = np.interp(unmixing_wavelengths, blood_scatter.wavelengths, blood_scatter.values)
-
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
 
 oxy_data = load_iad_results(os.path.join(dye_spectra_dir, f"BIR3.npz"))
 oxy_absorption_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), oxy_data["mua"])
@@ -36,15 +38,15 @@ deoxy_scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_d
 
 
 plt.figure(figsize=(5, 4))
-plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO2", color="red")#, linestyle="--")
-# plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="HbO2 dye (IR-1061)", color="red")
-# plt.fill_between(unmixing_wavelengths, oxy_absorption_spectrum - oxy_absorption_std,
-#                  oxy_absorption_spectrum + oxy_absorption_std, color="red", alpha=0.1)
+plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO2", color="red", linestyle="--")
+plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="HbO2 dye (IR-1061)", color="red")
+plt.fill_between(unmixing_wavelengths, oxy_absorption_spectrum - oxy_absorption_std,
+                 oxy_absorption_spectrum + oxy_absorption_std, color="red", alpha=0.1)
 
-plt.plot(unmixing_wavelengths, hb_spectrum, label="Hb", color="teal")#, linestyle="--")
-# plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum, label="Hb-dye (Spectrasense-765)", color="teal")
-# plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum - deoxy_absorption_std,
-#                  deoxy_absorption_spectrum + deoxy_absorption_std, color="teal", alpha=0.1)
+plt.plot(unmixing_wavelengths, hb_spectrum, label="Hb", color="teal", linestyle="--")
+plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum, label="Hb-dye (Spectrasense-765)", color="teal")
+plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum - deoxy_absorption_std,
+                 deoxy_absorption_spectrum + deoxy_absorption_std, color="teal", alpha=0.1)
 
 plt.ylabel("Absorption coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
@@ -64,8 +66,9 @@ plt.legend(fancybox=True, framealpha=0)
 # plt.legend(fancybox=True, framealpha=0)
 
 plt.tight_layout()
-plt.savefig(f"/home/kris/Data/Dye_project/Plots/blood.png", dpi=400, transparent=False)
-plt.show()
+plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", "blood.png"),
+            dpi=400, transparent=False)
+# plt.show()
 plt.close()
 
 
