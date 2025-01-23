@@ -1,14 +1,14 @@
 from ap.utils.io_iad_results import load_iad_results
-from ap.dye_analysis import DyeColors, DyeNames
+from ap.dye_analysis import DyeColors
 import matplotlib.pyplot as plt
-import simpa as sp
 import numpy as np
 import os
 plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 unmixing_wavelengths = np.arange(700, 855, 10)
 
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
+base_path = "/home/kris/Data/Dye_project/publication_data"
+dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
 
 oxy_data = load_iad_results(os.path.join(dye_spectra_dir, f"BIR3.npz"))
 oxy_absorption_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), oxy_data["mua"])
@@ -117,7 +117,8 @@ plt.xlabel("Wavelength [nm]")
 # plt.xlabel("Wavelength [nm]")
 # plt.legend(fancybox=True, framealpha=0)
 plt.tight_layout()
-plt.savefig(f"/home/kris/Data/Dye_project/Plots/oxy_levels.png", dpi=400, transparent=False, bbox_inches="tight")
+plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", "oxy_levels.png"),
+            dpi=400, transparent=False, bbox_inches="tight")
 # plt.show()
 plt.close()
 
