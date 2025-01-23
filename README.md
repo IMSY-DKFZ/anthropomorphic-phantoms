@@ -12,7 +12,8 @@ This Python package provides functionalities for photoacoustic imaging and hyper
 To install this package, you can use pip. Open a terminal and run the following command:
 
 ```
-pip install photoacoustic-imaging
+pip install htc
+pip install .
 ```
 
 ## Usage

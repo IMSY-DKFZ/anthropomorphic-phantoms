@@ -3,9 +3,9 @@ requires = ["setuptools", "wheel", "pybind11"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tmd"
+name = "ap"
 version = "0.0.1"
-description = "Tissue-mimicking dye mixtures"
+description = "Anthropomorphic Phantoms"
 authors = [
   { name="Kris Dreher", email="k.dreher@dkfz-heidelberg.de" },
 ]
@@ -17,9 +17,11 @@ requires-python = ">=3.8,<3.12"
 dependencies = [
     "matplotlib",
     "numpy",
+    "scipy",
+    "pandas",
     "simpa",
-    "sympy",
-    "tqdm"
+    "pynrrd",
+    "patato@git+https://github.com/BohndiekLab/patato",
 ]
 
 [tool.setuptools.packages.find]
