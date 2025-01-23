@@ -1,10 +1,11 @@
 from ap.utils.io_iad_results import load_iad_results
-from ap.dye_analysis import DyeColors, DyeNames
+from ap.dye_analysis import DyeColors
 import matplotlib.pyplot as plt
 import simpa as sp
 import numpy as np
 import os
-
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
 
 base_path = "/home/kris/Data/Dye_project/publication_data"
 dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
@@ -65,7 +66,7 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
     scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), scatter_std)
 
     if f_idx in [0, 3, 6, 9]:
-        plt.figure(figsize=(10, 4))
+        plt.figure(figsize=(11, 4))
         ax1 = plt.subplot(1, 2, 1)
         ax2 = plt.subplot(1, 2, 2)
         ax1.set_title("Absorption")
