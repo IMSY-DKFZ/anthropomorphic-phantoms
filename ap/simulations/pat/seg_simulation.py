@@ -1,73 +1,56 @@
 from simpa import Tags
 import simpa as sp
 import numpy as np
-import nrrd
-import matplotlib.pyplot as plt
-from ap.utils.default_settings import run_seg_based_simulation
-
-# FIXME temporary workaround for newest Intel architectures
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+from ap.simulations.pat.custom_msot_acuity import MSOTAcuityEcho
+from ap.utils.default_settings import get_default_acoustic_settings, get_default_das_reconstruction_settings, \
+    segmentation_class_mapping
 
-# If VISUALIZE is set to True, the simulation result will be plotted
-VISUALIZE = True
 
-# TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
-#  point to the correct file in the PathManager().
+def run_seg_based_simulation(save_path, volume_name, label_mask, spacing, device_position,
+                             wavelengths, forearm_nr: str = "Forearm_1", phantom_sos_adjustment: int = 0):
+    path_manager = sp.PathManager()
 
-base_path = "/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/Reconstructions_das"
+    labels_shape = label_mask.shape
+    settings = sp.Settings()
+    settings[Tags.SIMULATION_PATH] = os.path.dirname(save_path)
+    settings[Tags.VOLUME_NAME] = volume_name
+    settings[Tags.RANDOM_SEED] = 1234
+    settings[Tags.WAVELENGTHS] = wavelengths
+    settings[Tags.SPACING_MM] = spacing
+    settings[Tags.DIM_VOLUME_X_MM] = labels_shape[0] * spacing
+    settings[Tags.DIM_VOLUME_Y_MM] = labels_shape[1] * spacing
+    settings[Tags.DIM_VOLUME_Z_MM] = labels_shape[2] * spacing
+    settings[Tags.GPU] = True
 
-forearm_dict = {
-    "Forearm_1": {
-        "nr": 1,
-        "label_path": "Study_26/Scan_4_recon-labels.nrrd",
-        "device_pos": 460
-    },
-    # "Forearm_3": {
-    #     "nr": 3,
-    #     "label_path": "Study_18/Scan_1_image-labels.nrrd",
-    #     "device_pos": 453,
-    # },
-    # "Forearm_6": {
-    #     "nr": 6,
-    #     "label_path": "Study_19/Scan_1_image-labels.nrrd",
-    #     "device_pos": 459
-    # },
-}
+    settings.set_volume_creation_settings({
+        Tags.INPUT_SEGMENTATION_VOLUME: label_mask,
+        Tags.SEGMENTATION_CLASS_MAPPING: segmentation_class_mapping(forearm_nr,
+                                                                    phantom_sos_adjustment=phantom_sos_adjustment),
 
-for forearm in forearm_dict:
+    })
 
-    path = os.path.join(base_path, forearm_dict[forearm]["label_path"])
-    volume_name = forearm
+    settings.set_optical_settings({
+        Tags.OPTICAL_MODEL_NUMBER_PHOTONS: 1e8,
+        Tags.OPTICAL_MODEL_BINARY_PATH: path_manager.get_mcx_binary_path(),
+        Tags.LASER_PULSE_ENERGY_IN_MILLIJOULE: 50,
+    })
 
-    label_mask, _ = nrrd.read(path)
-    label_mask = np.squeeze(label_mask)
-    # plt.imshow(np.fliplr(np.rot90(label_mask, 3)))
-    # plt.show()
-    # exit()
-    label_mask = np.expand_dims(label_mask, 1)
-    input_spacing = 0.1
-    label_mask = np.tile(label_mask, (1, 200, 1))
-    label_mask[200, 100, 100] = 11
-    y_middle_slice = 100
+    settings.set_reconstruction_settings(get_default_das_reconstruction_settings())
+    settings.set_acoustic_settings(get_default_acoustic_settings(path_manager))
 
-    label_mask = np.pad(label_mask, ((160, 160), (0, 0), (460, 100)), mode="edge")
-    # label_mask = np.pad(label_mask, ((180, 180), (0, 0), (0, 0)), mode="edge")
-    # plt.imshow(label_mask[:, y_middle_slice, :])
-    # plt.title(f"Forearm {forearm_dict[forearm]['nr']}")
-    # plt.show()
-    # exit()
-    # continue
+    pipeline = [
+        sp.SegmentationBasedAdapter(settings),
+        sp.MCXAdapter(settings),
+        sp.KWaveAdapter(settings),
+        sp.DelayAndSumAdapter(settings),
+        sp.FieldOfViewCropping(settings),
+    ]
 
-    run_seg_based_simulation(save_path=path, volume_name=volume_name, label_mask=label_mask,
-                             spacing=input_spacing, device_position=forearm_dict[forearm]["device_pos"] * input_spacing,
-                             wavelengths=np.arange(700, 701, 10), forearm_nr=forearm_dict[forearm]["nr"])
+    device = MSOTAcuityEcho(device_position_mm=np.array([
+        settings[Tags.DIM_VOLUME_X_MM]/2,
+        settings[Tags.DIM_VOLUME_Y_MM]/2,
+        device_position]),
+        field_of_view_extent_mm=np.array([-20, 20, 0, 0, 0, 20]))
 
-    WAVELENGTH = 700
-    if VISUALIZE:
-
-        data = sp.load_data_field(os.path.join(os.path.dirname(path), f"{volume_name}.hdf5"),
-                                  Tags.DATA_FIELD_RECONSTRUCTED_DATA, wavelength=WAVELENGTH)
-        plt.imshow(np.fliplr(np.rot90(data, 3)))
-        plt.show()
-        print("hallo")
+    sp.simulate(pipeline, settings, device)

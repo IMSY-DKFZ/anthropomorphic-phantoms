@@ -12,22 +12,8 @@ import json
 from skimage.transform import rescale
 from ap.oxy_estimation.linear_unmixing import LinearUnmixingOxyEstimator
 import nrrd
-#
-#
-# from ap.utils.default_settings import (get_default_das_reconstruction_settings,
-#                                         )
-# from ap.utils.recon_utils import correct_er_sensors
-# from ap.simulations.pat.custom_msot_acuity import MSOTAcuityEcho
-#
-# from simpa.core.simulation_modules.reconstruction_module.reconstruction_utils import \
-#     tukey_bandpass_filtering_with_settings
 
 
-
-# base_path = "/home/kris/Data/Dye_project/PAT_Data/Processed_Data/"
-# base_path = "/home/kris/Data/Dye_project/phantom_data/Kris_Vessels_90-100_processed/"
-# base_path = "/home/kris/Data/Dye_project/PAT_Data/iThera_data/Processed_Data/"
-# base_path = "/home/kris/Data/Dye_project/PAT_Data/Depth_test_data/Processed_data"
 base_path = "/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/Processed_Data"
 
 studies = sorted(glob.glob(os.path.join(base_path, "Study_*")))
