@@ -79,7 +79,7 @@ for f_idx, (forearm_nr, forearm_path) in enumerate(forearm_dict.items()):
                                           "description": "changed sos"},
                          save_fig=not VISUALIZE)
 
-    check_for_vessel_diameter_changes(simulation_path=path,
+    check_for_vessel_diameter_changes(simulation_path=save_path,
                                       forearm_nr=forearm_nr,
                                       comparison_dict={"short": [f"sos{sos_adjustment}" for sos_adjustment in sos_adjustments
                                                                  if sos_adjustment != 0],
