@@ -10,58 +10,24 @@ import nrrd
 from matplotlib_scalebar.scalebar import ScaleBar
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.lines import Line2D
-from typing import Union
 import json
 
 recon_method = "das"
-# base_path = f"/home/kris/Data/Dye_project/PAT_Data/Example_reconstructions_{recon_method}/"
-base_path = f"/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/Reconstructions_das/"
 
-measurements_path = "/home/kris/Data/Dye_project/Measured_Spectra"
+base_path = "/home/kris/Data/Dye_project/publication_data"
+
+measurements_path = os.path.join(base_path, "Measured_Spectra")
 
 roi: int = 5
 normalize: int = 1
 average_phantom: int = 0
 
-# examples_images = {
-#     # 1: {"oxy": 0.5, "path": os.path.join("Study_6", "Scan_22.hdf5")},
-#     # 2: {"oxy": 0.3, "path": os.path.join("Study_7", "Scan_11.hdf5")},
-#     3: {"oxy": 0, "path": os.path.join("Study_8", "Scan_17.hdf5")},
-#     # 4: {"oxy": 0.7, "path": os.path.join("Study_9", "Scan_4.hdf5")},
-#     # 5: {"oxy": 1, "path": os.path.join("Study_10", "Scan_8.hdf5")},
-#     # 6: {"oxy": 1, "path": os.path.join("Study_11", "Scan_19.hdf5")},
-# }
-
-# examples_images = {
-#     # 1: {"oxy": 0.5, "path": os.path.join("Study_17", "Scan_1.hdf5")},
-#     3: {"oxy": 0, "path": os.path.join("Study_18", "Scan_1.hdf5")},
-#     # 5: {"oxy": 1, "path": os.path.join("Study_19", "Scan_1.hdf5")},
-# }
-
-# examples_images = {
-#     # 1: {"oxy": 0.5, "path": os.path.join("Study_17", "Forearm_1.hdf5")},
-#     3: {"oxy": 0, "path": os.path.join("Study_18", "Forearm_3.hdf5")},
-#     # 6: {"oxy": 1, "path": os.path.join("Study_19", "Forearm_6.hdf5")},
-# }
-
-# ithera images
-# examples_images = {
-#     1: {"oxy": 0.5, "path": os.path.join("Study_61", "Scan_24_recon.hdf5")},
-#     2: {"oxy": 0.3, "path": os.path.join("Study_62", "Scan_11_recon.hdf5")},
-#     3: {"oxy": 0, "path": os.path.join("Study_63", "Scan_17_recon.hdf5")},
-#     4: {"oxy": 0.7, "path": os.path.join("Study_64", "Scan_5_recon.hdf5")},
-#     # 5: {"oxy": 1, "path": os.path.join("Study_19", "Scan_1_recon.hdf5")},
-#     6: {"oxy": 1, "path": os.path.join("Study_66", "Scan_20_recon.hdf5")},
-# }
-
-# ithera2 images
 examples_images = {
-    1: {"oxy": 0.5, "path": os.path.join("Study_25", "Scan_25_recon1.hdf5")},
-    2: {"oxy": 0.3, "path": os.path.join("Study_26", "Scan_12_recon1.hdf5")},
-    3: {"oxy": 0, "path": os.path.join("Study_27", "Scan_19_recon1.hdf5")},
-    4: {"oxy": 0.7, "path": os.path.join("Study_28", "Scan_5_recon1.hdf5")},
-    5: {"oxy": 1, "path": os.path.join("Study_31", "Scan_9_recon1.hdf5")},
-    # 6: {"oxy": 1, "path": os.path.join("Study_32", "Scan_21_recon1.hdf5")},
+    1: {"oxy": 0.5, "path": os.path.join("Phantom_01", "Scan_25_recon.hdf5")},
+    2: {"oxy": 0.3, "path": os.path.join("Phantom_02", "Scan_12_recon.hdf5")},
+    3: {"oxy": 0, "path": os.path.join("Phantom_03", "Scan_19_recon.hdf5")},
+    4: {"oxy": 0.7, "path": os.path.join("Phantom_04", "Scan_5_recon.hdf5")},
+    5: {"oxy": 1, "path": os.path.join("Phantom_05", "Scan_9_recon.hdf5")},
 }
 
 oxy_dict = {
@@ -74,7 +40,7 @@ oxy_dict = {
 
 for forearm_nr, forearm_specs in examples_images.items():
     print(forearm_nr)
-    main_phantom_path = os.path.join(base_path, forearm_specs["path"])
+    main_phantom_path = os.path.join(base_path, "PAT_Data", forearm_specs["path"])
     if average_phantom:
         path_list = generate_file_paths(main_phantom_path)
     else:
@@ -82,10 +48,8 @@ for forearm_nr, forearm_specs in examples_images.items():
     spectra_to_unmix = list()
     for p_idx, path in enumerate(path_list):
         wavelengths = sp.load_data_field(path, sp.Tags.SETTINGS)[sp.Tags.WAVELENGTHS][1:]
-        # print(wavelengths)
-        # training_labels = np.rot90(sp.load_data_field(path, sp.Tags.DATA_FIELD_SEGMENTATION), 3)
         z_det_pos = 152
-        training_labels = np.rot90(nrrd.read(path.replace("Reconstructions_das", "US_analysis").replace("recon1.hdf5", "pa-labels.nrrd"))[0], 3)
+        training_labels = np.rot90(nrrd.read(path.replace("recon.hdf5", "pa-labels.nrrd"))[0], 3)
         training_labels = np.squeeze(np.fliplr(training_labels)[z_det_pos:z_det_pos + 200, :])
         label = oxy_dict[forearm_specs["oxy"]]
         training_labels[training_labels != label] = 0
@@ -112,7 +76,6 @@ for forearm_nr, forearm_specs in examples_images.items():
             vessel = reconstruction_array[:, training_labels == 1]
         else:
             indices = top_x_percent_indices(reconstruction_array[10], training_labels, roi)
-            # print("Indices of the top 20% maximum values:", indices)
 
             seg_array = np.zeros_like(reconstruction_array[10])
             maximum_value_pixels = list()
@@ -125,7 +88,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         print(np.mean(vessel, axis=0).shape)
         print(vessel.shape)
         if normalize:
-            # vessel = vessel - np.mean(vessel, axis=0)
+
             vessel_norm = np.linalg.norm(vessel, axis=0, ord=1)
             vessel_spectrum = vessel / vessel_norm[np.newaxis, :]
         else:
@@ -140,7 +103,9 @@ for forearm_nr, forearm_specs in examples_images.items():
             oxy=forearm_specs["oxy"])
 
         json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
-                  open(path.replace("hdf5", "json"), "w"))
+                  open(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                    f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.json")
+                       , "w"))
 
         plt.subplot(2, 1, 2)
 
@@ -176,6 +141,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         lgd.set_title(lgd.get_title().get_text())
         fig.tight_layout()
 
-        # plt.show()
-        plt.savefig(os.path.join("/home/kris/Pictures/Phantom_Paper_Figures/", f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png"), dpi=300)
+        plt.savefig(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png"),
+                    bbox_inches="tight", pad_inches=0, dpi=300)
         plt.close()
