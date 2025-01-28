@@ -7,7 +7,18 @@ plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 unmixing_wavelengths = np.arange(700, 855, 10)
 
-base_path = "/home/kris/Data/Dye_project/publication_data"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
+
 dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
 
 oxy_data = load_iad_results(os.path.join(dye_spectra_dir, f"BIR3.npz"))
@@ -101,7 +112,9 @@ plt.ylabel("Scattering coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
 
 plt.tight_layout()
-plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", "oxy_levels.png"),
+save_path = os.path.join(base_path, "Paper_Results", "Plots", "oxy_levels.png")
+os.makedirs(os.path.dirname(save_path), exist_ok=True)
+plt.savefig(save_path,
             dpi=400, transparent=False, bbox_inches="tight")
 # plt.show()
 plt.close()

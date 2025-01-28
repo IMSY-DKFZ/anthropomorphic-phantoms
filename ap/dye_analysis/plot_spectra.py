@@ -7,7 +7,18 @@ import numpy as np
 plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 
-base_path = "/home/kris/Data/Dye_project/publication_data"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
+
 spectrum_files = sorted(glob.glob(os.path.join(base_path, "Measured_Spectra", "*.npz")))
 
 excluded_phantoms = [f"BF{i}" for i in range(1, 10)] + ["BF10A", "BF10B", "BF10C", "BIR", "B90", "B93", "B95", "B97"]
@@ -56,7 +67,9 @@ for coefficient, desc, name in zip(["mua", "mus"], ["mu_a", "mu_s"], ["Absorptio
             plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=8, fancybox=True, frameon=True, framealpha=0.5)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_{name}.png"),
+    save_path = os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_{name}.png")
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    plt.savefig(save_path,
                 dpi=300, bbox_inches="tight")
     plt.close()
     # plt.show()

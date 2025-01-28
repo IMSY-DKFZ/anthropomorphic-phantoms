@@ -11,6 +11,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # If VISUALIZE is set to True, the simulation result will be plotted
 VISUALIZE = False
+run_simulation = False
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().

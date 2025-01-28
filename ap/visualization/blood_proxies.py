@@ -6,7 +6,18 @@ import os
 plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 
-base_path = "/home/kris/Data/Dye_project/publication_data"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
+
 dye_spectra_dir = os.path.join(base_path, "Measured_Spectra")
 
 unmixing_wavelengths = np.arange(700, 855, 1)
@@ -66,7 +77,9 @@ plt.legend(fancybox=True, framealpha=0)
 # plt.legend(fancybox=True, framealpha=0)
 
 plt.tight_layout()
-plt.savefig(os.path.join(base_path, "Paper_Results", "Plots", "blood.png"),
+save_path = os.path.join(base_path, "Paper_Results", "Plots", "blood.png")
+os.makedirs(os.path.dirname(save_path), exist_ok=True)
+plt.savefig(save_path,
             dpi=400, transparent=False)
 # plt.show()
 plt.close()

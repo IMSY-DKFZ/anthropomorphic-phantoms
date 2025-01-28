@@ -14,7 +14,17 @@ import json
 
 recon_method = "das"
 
-base_path = "/home/kris/Data/Dye_project/publication_data"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
 
 measurements_path = os.path.join(base_path, "Measured_Spectra")
 
@@ -102,10 +112,12 @@ for forearm_nr, forearm_specs in examples_images.items():
             wavelengths=wavelengths,
             oxy=forearm_specs["oxy"])
 
+        json_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.json")
+        os.makedirs(os.path.dirname(json_path), exist_ok=True)
+
         json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
-                  open(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
-                                    f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.json")
-                       , "w"))
+                  open(json_path, "w"))
 
         plt.subplot(2, 1, 2)
 
@@ -141,7 +153,8 @@ for forearm_nr, forearm_specs in examples_images.items():
         lgd.set_title(lgd.get_title().get_text())
         fig.tight_layout()
 
-        plt.savefig(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
-                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png"),
+        save_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png")
+        plt.savefig(save_path,
                     bbox_inches="tight", pad_inches=0, dpi=300)
         plt.close()

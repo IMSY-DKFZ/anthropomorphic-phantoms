@@ -11,6 +11,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # If VISUALIZE is set to True, the simulation result will be plotted
 VISUALIZE = False
+run_simulation = False
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -65,11 +66,13 @@ for f_idx, (forearm_nr, forearm_path) in enumerate(forearm_dict.items()):
         save_path = os.path.join(base_path, "Paper_Results", "PAT_Simulations", f"Phantom_0{f_idx + 1}", forearm_path)
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-        run_seg_based_simulation(save_path=save_path, volume_name=volume_name,
-                                 label_mask=label_mask,
-                                 spacing=input_spacing, device_position=device_pos * input_spacing,
-                                 wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1],
-                                 phantom_sos_adjustment=sos_adjustment)
+        if run_simulation:
+
+            run_seg_based_simulation(save_path=save_path, volume_name=volume_name,
+                                     label_mask=label_mask,
+                                     spacing=input_spacing, device_position=device_pos * input_spacing,
+                                     wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1],
+                                     phantom_sos_adjustment=sos_adjustment)
 
     visualize_comparison(simulation_path=save_path,
                          forearm_nr=forearm_nr,

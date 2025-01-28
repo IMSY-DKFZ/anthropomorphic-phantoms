@@ -10,7 +10,17 @@ from ap.utils.io_iad_results import load_iad_results
 from ap.utils.correlate_spectrum_to_oxies import correlate_spectrum
 import json
 
-base_path = "/home/kris/Data/Dye_project/publication_data"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
 
 measurements_path = os.path.join(base_path, "Measured_Spectra")
 
@@ -56,9 +66,12 @@ for forearm_nr, forearm_specs in examples_images.items():
         wavelengths=wavelengths,
         oxy=forearm_specs["oxy"])
 
+    json_path = os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
+                             f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.json")
+    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+
     json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
-              open(os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
-                                f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.json"), "w"))
+              open(os.path.dirname(json_path), "w"))
     print(f"Slope: {slope:.2f}, Intercept: {intercept:.2f}, R-value: {r_value:.2f}, "
           f"p-value: {p_value:.2f}, Std Error: {std_err:.2f}")
 
@@ -93,7 +106,8 @@ for forearm_nr, forearm_specs in examples_images.items():
 
     fig.tight_layout()
 
-    plt.savefig(os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
-                             f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png"),
+    save_path = os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
+                             f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png")
+    plt.savefig(save_path,
                 bbox_inches="tight", pad_inches=0, dpi=300)
     plt.close()

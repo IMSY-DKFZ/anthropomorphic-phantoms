@@ -6,7 +6,17 @@ import seaborn as sns
 plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 
-base_path = "/home/kris/Data/Dye_project/publication_data/"
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = ""
 
 examples_images = {
     1: {"oxy": 0.5, "path": "Scan_25_time_series.hdf5"},
@@ -72,5 +82,7 @@ for plot_idx in range(1, 3):
     # plt.title(f'Laser energy distribution {"all" if plot_idx == 1 else "day 1 and day 2"}')
     plt.legend()
 # plt.show()
-plt.savefig(os.path.join(base_path, "Paper_Results/Plots/laser_energies.png"),
+save_path = os.path.join(base_path, "Paper_Results/Plots/laser_energies.png")
+os.makedirs(os.path.dirname(save_path), exist_ok=True)
+plt.savefig(save_path,
             dpi=300, bbox_inches="tight")
