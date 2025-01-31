@@ -9,8 +9,20 @@ plt.switch_backend("TkAgg")
 from ap.oxy_estimation.linear_unmixing import LinearUnmixingOxyEstimator
 
 if __name__ == "__main__":
-    base_path = "/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/"
-    wavelengths = np.arange(700, 851, 10)
+
+    try:
+        run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+        print("This runner script is invoked in a bash script!")
+    except KeyError:
+        run_by_bash: bool = False
+
+    if run_by_bash:
+        base_path = os.environ["BASE_PATH"]
+    else:
+        # In case the script is run from an IDE, the base path has to be set manually
+        base_path = ""
+
+    wavelengths = np.arange(710, 851, 10)
     estimator = LinearUnmixingOxyEstimator({
         'estimation_type': 'proxy',
         "unmixing_wavelengths": wavelengths

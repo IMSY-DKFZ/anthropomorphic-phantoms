@@ -19,4 +19,8 @@ export PYTHON_PATH="$PWD"
 #python3 pa_image_analysis/plot_laser_energies.py
 
 #python3 pa_image_analysis/example_pat_images.py
-python3 hsi_image_analysis/example_hsi.py
+#python3 hsi_image_analysis/example_hsi.py
+
+python3 oxy_estimation/estimate_oxy_hsi.py
+python3 oxy_estimation/estimate_oxy_pa.py
+python3 oxy_estimation/evaluate_oxy.py
