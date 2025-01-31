@@ -9,7 +9,8 @@ plt.rcParams.update({'font.size': 12,
                      "font.family": "serif"})
 plt.switch_backend("TkAgg")
 
-def calculate_mean_std_ci(data, mask=None, aggregate_over_structures=True):
+
+def calculate_mean_std_ci(arr, mask=None, aggregate_over_structures=True):
     if mask is not None:
         if isinstance(mask, tuple):
             int_mask = mask[0].astype(int)
@@ -24,9 +25,9 @@ def calculate_mean_std_ci(data, mask=None, aggregate_over_structures=True):
 
             nr_conn = np.max(connected_components)
 
-            means = [np.nanmean(data[connected_components == i]) for i in range(1, nr_conn + 1)]
-            stds = [np.nanstd(data[connected_components == i]) for i in range(1, nr_conn + 1)]
-            cis = [stats.bootstrap((data[connected_components == i],),
+            means = [np.nanmean(arr[connected_components == i]) for i in range(1, nr_conn + 1)]
+            stds = [np.nanstd(arr[connected_components == i]) for i in range(1, nr_conn + 1)]
+            cis = [stats.bootstrap((arr[connected_components == i],),
                                    statistic=np.nanmean,
                                    confidence_level=0.95,
                                    method="percentile").confidence_interval for i in range(1, nr_conn + 1)]
@@ -35,14 +36,14 @@ def calculate_mean_std_ci(data, mask=None, aggregate_over_structures=True):
                                                                   np.mean([ci.high for ci in cis])]
 
         else:
-            data = data[mask]
+            arr = arr[mask]
 
-            mean, std = np.nanmean(data), np.nanstd(data)
-            ci = stats.bootstrap((data,), statistic=np.nanmean, confidence_level=0.95, method="percentile")
+            mean, std = np.nanmean(arr), np.nanstd(arr)
+            ci = stats.bootstrap((arr,), statistic=np.nanmean, confidence_level=0.95, method="percentile")
             conf_int = [ci.confidence_interval.low, ci.confidence_interval.high]
     else:
-        mean, std = np.nanmean(data), np.nanstd(data)
-        ci = stats.bootstrap((data,), statistic=np.nanmean, confidence_level=0.95, method="percentile")
+        mean, std = np.nanmean(arr), np.nanstd(arr)
+        ci = stats.bootstrap((arr,), statistic=np.nanmean, confidence_level=0.95, method="percentile")
         conf_int = [ci.confidence_interval.low, ci.confidence_interval.high]
 
     return mean, std, conf_int
@@ -107,7 +108,7 @@ else:
 
 
 if __name__ == "__main__":
-    for image_modality in ["pat"]:#, "hsi"]:
+    for image_modality in ["pat", "hsi"]:
         results_folder = os.path.join(base_path, "Paper_Results", "Oxy_Results")
         forearm_list = glob.glob(os.path.join(results_folder,
                                               f"{image_modality}_forearm_*.npz"))
