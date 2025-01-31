@@ -4,6 +4,7 @@ import simpa as sp
 import nrrd
 import os
 import json
+plt.switch_backend("TkAgg")
 
 from ap.oxy_estimation.linear_unmixing import LinearUnmixingOxyEstimator
 
@@ -17,11 +18,11 @@ if __name__ == "__main__":
     z_det_pos = 152
 
     examples_images = {
-        1: {"oxy": 0.5, "path": os.path.join("Study_25", "Scan_25"), "sim_path": os.path.join("Study_25", "Forearm_1")},
-        2: {"oxy": 0.3, "path": os.path.join("Study_26", "Scan_12"), "sim_path": os.path.join("Study_26", "Forearm_2")},
-        3: {"oxy": 0, "path": os.path.join("Study_27", "Scan_19"), "sim_path": os.path.join("Study_27", "Forearm_3")},
-        4: {"oxy": 0.7, "path": os.path.join("Study_28", "Scan_5"), "sim_path": os.path.join("Study_28", "Forearm_4")},
-        5: {"oxy": 1, "path": os.path.join("Study_31", "Scan_9"), "sim_path": os.path.join("Study_31", "Forearm_5")},
+        1: {"oxy": 0.5, "path": "Scan_25"},
+        2: {"oxy": 0.3, "path": "Scan_12"},
+        3: {"oxy": 0, "path": "Scan_19"},
+        4: {"oxy": 0.7, "path": "Scan_5"},
+        5: {"oxy": 1, "path": "Scan_9"},
     }
 
     oxy_dict = {
@@ -36,7 +37,7 @@ if __name__ == "__main__":
         1: 0,
         2: 0.5,
         3: 1,
-        4: 0,
+        4: 1,
         5: 0.5,
     }
 
@@ -44,13 +45,15 @@ if __name__ == "__main__":
     for forearm_nr, forearm_specs in examples_images.items():
         print(f"Processing Forearm {forearm_nr}")
         results[forearm_nr] = dict()
-        pa_path = os.path.join(base_path, "Reconstructions_das", forearm_specs["path"] + "_recon1.hdf5")
-        us_path = os.path.join(base_path, "US_analysis", forearm_specs["path"] + "_us.nrrd")
-        sim_path = os.path.join(base_path, "US_analysis", forearm_specs["sim_path"] + ".hdf5")
-        labels_path = os.path.join(base_path, "US_analysis", forearm_specs["path"] + "_pa-labels.nrrd")
+        pa_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{forearm_nr}",
+                               forearm_specs["path"] + "_recon.hdf5")
+        sim_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{forearm_nr}",
+                                "Simulations", f"Forearm_{forearm_nr}" + ".hdf5")
+        labels_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{forearm_nr}",
+                                   forearm_specs["path"] + "_pa-labels.nrrd")
 
         reconstruction = sp.load_data_field(pa_path, sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
-        reconstruction_array = np.stack([np.fliplr(np.rot90(reconstruction[str(wl)][:, :, ...], 3)) for wl in wavelengths])
+        reconstruction_array = np.stack([np.rot90(reconstruction[str(wl)][:, :, ...], 3) for wl in wavelengths])
 
         fluence = sp.load_data_field(sim_path, sp.Tags.DATA_FIELD_FLUENCE)
         fluence_array = np.stack([np.fliplr(np.rot90(fluence[str(wl)][:, :, ...], 3)) for wl in wavelengths])
@@ -58,34 +61,8 @@ if __name__ == "__main__":
         mua_sim = sp.load_data_field(sim_path, sp.Tags.DATA_FIELD_ABSORPTION_PER_CM)
         mua_sim_array = np.stack([np.fliplr(np.rot90(mua_sim[str(wl)][:, :, ...], 3)) for wl in wavelengths])
 
-        # plt.subplot(3, 2, 1)
-        # plt.imshow(mua_sim_array[9], vmin=0.01, vmax=5.5)
-        # plt.colorbar()
-        # plt.subplot(3, 2, 2)
-        # plt.title(f"wl: {wavelengths[9]}")
-        # plt.imshow(fluence_array[9], vmin=0.0001, vmax=0.01)
-        # plt.colorbar()
-        # plt.subplot(3, 2, 3)
-        # plt.imshow(mua_sim_array[9], vmin=0.01, vmax=5.5)
-        # plt.colorbar()
-        # plt.subplot(3, 2, 2)
-        # plt.title(f"wl: {wavelengths[9]}")
-        # plt.imshow(fluence_array[9], vmin=0.0001, vmax=0.01)
-        # plt.colorbar()
-        # plt.subplot(3, 2, 5)
-        # plt.title("Absorption")
-        # plt.plot(wavelengths, mua_sim_array[:, 0, 0], label="Water", c="blue")
-        # plt.plot(wavelengths, mua_sim_array[:, 150, 100], label="Background", c="pink")
-        # plt.show()
-        # plt.close()
-
         fluence_corr_recon = reconstruction_array / fluence_array
 
-        # recon_norm = np.linalg.norm(reconstruction_array, axis=0, ord=1)
-        # reconstruction_array = reconstruction_array / recon_norm[np.newaxis, :]
-
-        us_image = nrrd.read(us_path)[0]
-        us_image = np.fliplr(np.rot90(us_image, 3))[z_det_pos:z_det_pos+200, :]
 
         labels = nrrd.read(labels_path)[0]
         labels = np.squeeze(np.fliplr(np.rot90(labels, 3))[z_det_pos:z_det_pos+200, :])
@@ -99,39 +76,50 @@ if __name__ == "__main__":
 
         oxy[labels == 3] = forearm_dict[forearm_nr]
 
+        plt.subplot(2, 4, 1)
+        plt.imshow(labels)
+        plt.title("Original Labels")
+        plt.colorbar()
+        plt.subplot(2, 4, 2)
+        plt.imshow(reconstruction_array[5])
+        plt.title("Original Reconstruction")
+        plt.colorbar()
+        plt.subplot(2, 4, 3)
+        plt.imshow(fluence_array[5])
+        plt.title("Simulated Fluence")
+        plt.colorbar()
+        plt.subplot(2, 4, 4)
+        plt.imshow(fluence_corr_recon[5])
+        plt.title("Fluence Corrected Reconstruction")
+        plt.colorbar()
+        plt.subplot(2, 4, 5)
+        plt.imshow(oxy, vmin=0, vmax=1)
+        plt.colorbar()
+        plt.title("Oxy")
         oxy_estimates = estimator.estimate(reconstruction_array)
         fluence_corr_estimates = estimator.estimate(fluence_corr_recon)
-        with open(pa_path.replace("hdf5", "json"), "r") as json_file:
+        plt.subplot(2, 4, 6)
+        plt.imshow(fluence_corr_estimates, vmin=0, vmax=1)
+        plt.title("Fluence Corrected Oxy Estimates")
+        plt.colorbar()
+        plt.subplot(2, 4, 7)
+        plt.imshow(oxy_estimates, vmin=0, vmax=1)
+        plt.title("Oxy Estimates")
+        plt.colorbar()
+
+        json_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                 f"PAT_spectrum_correlation_oxy_{int(100 * forearm_specs['oxy']):0d}_p0.json")
+        with open(json_path, "r") as json_file:
             regression_data = json.load(json_file)
         cal_oxy_estimates = estimator.estimate(
             (reconstruction_array - regression_data["intercept"])/regression_data["slope"])
-        #
-        # fluence_corr_cal_oxy_estimates = estimator.estimate(
-        #     (reconstruction_array - regression_data["intercept"]) / regression_data["slope"] / fluence_array)
 
-
-        # oxy_nans = np.isnan(oxy_estimates)
-        # cal_oxy_nans = np.isnan(cal_oxy_estimates)
-        #
-        # plt.subplot(3, 2, 1)
-        # plt.imshow(oxy, vmin=0, vmax=1)
-        # plt.title("Ground Truth")
-        # plt.subplot(3, 2, 2)
-        # plt.imshow(mua_sim_array[0])
-        # plt.title("Absorption")
-        # plt.subplot(3, 2, 4)
-        # plt.imshow(fluence_array[0])
-        # plt.title("Fluence")
-        # plt.subplot(3, 2, 3)
-        # plt.imshow(oxy_estimates)
-        # plt.title("LSU estimates")
-        # plt.subplot(3, 2, 6)
-        # plt.imshow(fluence_corr_estimates)
-        # plt.title("Fluence corrected LSU estimates")
-        # plt.subplot(3, 2, 5)
-        # # plt.imshow(cal_oxy_estimates)
+        plt.subplot(2, 4, 8)
+        plt.imshow(cal_oxy_estimates, vmin=0, vmax=1)
+        plt.colorbar()
+        plt.title("Calibrated Oxy Estimates")
         # plt.show()
-        # plt.close()
+        plt.close()
         # exit()
 
         res = {
@@ -141,4 +129,7 @@ if __name__ == "__main__":
             "vessels": vessels,
             "tissue": tissue
         }
-        np.savez(f"/home/kris/Data/Dye_project/PAT_Data/Oxy_Results/forearm_{forearm_nr}.npz", **res)
+
+        save_path = os.path.join(base_path, "Paper_Results", "Oxy_Results", f"pat_forearm_{forearm_nr}.npz")
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        np.savez(save_path, **res)
