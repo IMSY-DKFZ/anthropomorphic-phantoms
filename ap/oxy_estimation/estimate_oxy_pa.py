@@ -76,36 +76,8 @@ if __name__ == "__main__":
 
         oxy[labels == 3] = forearm_dict[forearm_nr]
 
-        plt.subplot(2, 4, 1)
-        plt.imshow(labels)
-        plt.title("Original Labels")
-        plt.colorbar()
-        plt.subplot(2, 4, 2)
-        plt.imshow(reconstruction_array[5])
-        plt.title("Original Reconstruction")
-        plt.colorbar()
-        plt.subplot(2, 4, 3)
-        plt.imshow(fluence_array[5])
-        plt.title("Simulated Fluence")
-        plt.colorbar()
-        plt.subplot(2, 4, 4)
-        plt.imshow(fluence_corr_recon[5])
-        plt.title("Fluence Corrected Reconstruction")
-        plt.colorbar()
-        plt.subplot(2, 4, 5)
-        plt.imshow(oxy, vmin=0, vmax=1)
-        plt.colorbar()
-        plt.title("Oxy")
         oxy_estimates = estimator.estimate(reconstruction_array)
         fluence_corr_estimates = estimator.estimate(fluence_corr_recon)
-        plt.subplot(2, 4, 6)
-        plt.imshow(fluence_corr_estimates, vmin=0, vmax=1)
-        plt.title("Fluence Corrected Oxy Estimates")
-        plt.colorbar()
-        plt.subplot(2, 4, 7)
-        plt.imshow(oxy_estimates, vmin=0, vmax=1)
-        plt.title("Oxy Estimates")
-        plt.colorbar()
 
         json_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
                                  f"PAT_spectrum_correlation_oxy_{int(100 * forearm_specs['oxy']):0d}_p0.json")
@@ -113,14 +85,6 @@ if __name__ == "__main__":
             regression_data = json.load(json_file)
         cal_oxy_estimates = estimator.estimate(
             (reconstruction_array - regression_data["intercept"])/regression_data["slope"])
-
-        plt.subplot(2, 4, 8)
-        plt.imshow(cal_oxy_estimates, vmin=0, vmax=1)
-        plt.colorbar()
-        plt.title("Calibrated Oxy Estimates")
-        # plt.show()
-        plt.close()
-        # exit()
 
         res = {
             "oxy_error": np.abs(oxy - oxy_estimates),
