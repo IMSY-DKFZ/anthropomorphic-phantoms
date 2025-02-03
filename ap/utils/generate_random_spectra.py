@@ -45,7 +45,8 @@ def generate_tissue_spectra(nr_of_spectra: int,
         if plot_spectra:
             plt.plot(wavelength_range, new_spectrum)
             plt.show()
-
+    if len(new_spectra) == 1:
+        new_spectra = new_spectra[0]
     return new_spectra
 
 
