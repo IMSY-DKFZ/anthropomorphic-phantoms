@@ -25,17 +25,19 @@ def get_centroid_loc_and_orientation(con_props):
 
 
 def check_for_vessel_diameter_changes(simulation_path: str, forearm_nr: str,
-                                      comparison_dict: dict, save_fig: bool = False):
+                                      comparison_dict: dict, save_fig: bool = False,
+                                      labels_path: str = "",
+                                      results_path: str = ""):
 
     if isinstance(comparison_dict["short"], str):
         comparison_dict["short"] = [comparison_dict["short"]]
     else:
         assert isinstance(comparison_dict["short"], list), "comparison_dict['short'] must be string or list of strings"
 
-    orig_recon, _ = nrrd.read(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}.nrrd"))
+    orig_recon, _ = nrrd.read(os.path.join(os.path.dirname(labels_path), f"{forearm_nr}.nrrd"))
     orig_recon = np.rot90(np.squeeze(orig_recon), 3)
 
-    segmentation, _ = nrrd.read(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}-labels.nrrd"))
+    segmentation, _ = nrrd.read(os.path.join(os.path.dirname(labels_path), f"{forearm_nr}-labels.nrrd"))
     segmentation = np.rot90(np.squeeze(segmentation), 3).astype(int)
 
     connected_labels = measure.label(segmentation, background=0)
@@ -67,10 +69,10 @@ def check_for_vessel_diameter_changes(simulation_path: str, forearm_nr: str,
 
 
     for sos_idx, sos_adjustment in enumerate(comparison_dict["short"]):
-        sos_recon, _ = nrrd.read(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}_{sos_adjustment}.nrrd"))
+        sos_recon, _ = nrrd.read(os.path.join(os.path.dirname(labels_path), f"{forearm_nr}_{sos_adjustment}.nrrd"))
         sos_recon = np.rot90(np.squeeze(sos_recon), 3)
 
-        sos_segmentation, _ = nrrd.read(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}_{sos_adjustment}-labels.nrrd"))
+        sos_segmentation, _ = nrrd.read(os.path.join(os.path.dirname(labels_path), f"{forearm_nr}_{sos_adjustment}-labels.nrrd"))
         sos_segmentation = np.rot90(np.squeeze(sos_segmentation), 3).astype(int)
 
         connected_labels = measure.label(sos_segmentation, background=0)
@@ -102,7 +104,7 @@ def check_for_vessel_diameter_changes(simulation_path: str, forearm_nr: str,
         # plt.colorbar(img, cax=cax, orientation="vertical")
 
     if save_fig:
-        plt.savefig(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}_vessel_comparison.png"),
+        plt.savefig(os.path.join(results_path, f"{forearm_nr}_vessel_comparison.png"),
                     bbox_inches="tight", pad_inches=0)
     else:
         plt.show()

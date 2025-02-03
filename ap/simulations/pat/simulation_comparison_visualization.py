@@ -14,7 +14,7 @@ from ap.utils.maximum_x_percent_values import top_x_percent_indices
 
 
 def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.ndarray,
-                         comparison_dict: dict, save_fig: bool = False):
+                         comparison_dict: dict, save_fig: bool = False, results_path: str = ""):
 
     if isinstance(comparison_dict["short"], str):
         comparison_dict["short"] = [comparison_dict["short"]]
@@ -140,7 +140,7 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
         plt.legend()
 
         if save_fig:
-            plt.savefig(os.path.join(os.path.dirname(simulation_path), f"{forearm_nr}_{short_description}.png"),
+            plt.savefig(os.path.join(results_path, f"{forearm_nr}_{short_description}.png"),
                         bbox_inches='tight', pad_inches=0)
         else:
             plt.show()
