@@ -1,65 +1,26 @@
+from typing import Union
+
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
 from torch import nn
 from torch.functional import F
+from ap.dye_analysis import DyeColors, DyeNames
+from tqdm import tqdm
 import simpa as sp
 import os
 from collections import OrderedDict
 from ap.utils.io_iad_results import load_iad_results
-from ap.dye_analysis import DyeColors, DyeNames
-from tqdm import tqdm
-
-unmixing_wavelengths = np.arange(700, 850, 10)
-target_spectrum_name = "HbO2"
-oxygenation = 0
-unmixing_dyes = ["B90", "BIR"]
-
-hbo2_spectrum, hb_spectrum = sp.get_simpa_internal_absorption_spectra_by_names(
-    [sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_OXYHEMOGLOBIN, sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_DEOXYHEMOGLOBIN]
-)
-wavelengths = hb_spectrum.wavelengths
-hb_spectrum, hbo2_spectrum = hb_spectrum.values, hbo2_spectrum.values
-
-target_spectra = {
-    "Hb": hb_spectrum,
-    "HbO2": hbo2_spectrum,
-}
-
-target_spectrum = torch.from_numpy(np.interp(unmixing_wavelengths, wavelengths, target_spectra[target_spectrum_name])).type(torch.float32)
-
-if oxygenation:
-    target_spectrum = torch.from_numpy(np.interp(unmixing_wavelengths, wavelengths, oxygenation * hbo2_spectrum + (1 - oxygenation) * hb_spectrum)).type(torch.float32)
-abs_spectrum = load_iad_results("/home/kris/Data/Dye_project/Measured_Spectra/B93.npz")["mua"]
-abs_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), abs_spectrum)
-target_spectrum = torch.from_numpy(abs_spectrum).type(torch.float32)
-
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
-example_spectra = os.listdir(dye_spectra_dir)
-
-nr_of_wavelengths = len(unmixing_wavelengths)
-nr_of_dyes = len(unmixing_dyes)
-used_dyes = 0
-
-chromophore_spectra_dict = OrderedDict()
-input_spectra = torch.zeros([nr_of_dyes, nr_of_wavelengths])
-for dye_idx, example_spectrum in enumerate(example_spectra):
-    spectrum_name = example_spectrum.split(".")[0]
-    if spectrum_name not in unmixing_dyes:
-        continue
-    c = 1#0/3 if spectrum_name != "BJ7" else 10/7
-    abs_spectrum = load_iad_results(os.path.join(dye_spectra_dir, example_spectrum))["mua"]
-    abs_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), abs_spectrum)
-    chromophore_spectra_dict[spectrum_name] = c*abs_spectrum
-    input_spectra[used_dyes, :] = torch.from_numpy(c*abs_spectrum).type(torch.float32)
-    used_dyes += 1
+from ap.dye_analysis.measured_spectra import get_measured_spectra
+plt.switch_backend("TkAgg")
 
 
 class DyeConcentrationOptimizer(nn.Module):
-    """Pytorch model for custom gradient optimization of dye concentrations.
+    """
+    Pytorch model for custom gradient optimization of dye concentrations.
     """
 
-    def __init__(self, wavelengths, nr_of_dyes, n_iter=5000):
+    def __init__(self, wavelengths, nr_of_dyes, n_iter=10000, max_concentration=5):
         super().__init__()
         self.nr_of_dyes = nr_of_dyes
         self.wavelengths = wavelengths
@@ -67,14 +28,14 @@ class DyeConcentrationOptimizer(nn.Module):
         concentrations = torch.distributions.Uniform(0, 0.1).sample((nr_of_dyes,))
         # make weights torch parameters
         self.concentrations = nn.Parameter(concentrations)
+        self.max_concentration = max_concentration
         self.n_iter = n_iter
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
 
     def forward(self, X):
-        """Implement function to be optimised. In this case, an exponential decay
-        function (a + exp(-k * X) + b),
+        """Implement function to be optimised. In this case, a simple matrix multiplication.,
         """
-        mixed_spectrum = torch.matmul(self.concentrations, X) #+ test_spectrum
+        mixed_spectrum = torch.matmul(self.concentrations, X)
         return mixed_spectrum
 
     @staticmethod
@@ -106,47 +67,75 @@ class DyeConcentrationOptimizer(nn.Module):
             # loss += 0.5*torch.sum(self.concentrations)
             loss.backward()
             self.optimizer.step()
-            self.concentrations.data = self.concentrations.data.clamp(min=0, max=5)
+            self.concentrations.data = self.concentrations.data.clamp(min=0, max=self.max_concentration)
             self.optimizer.zero_grad()
             losses.append(loss)
             pbar.set_description(f"loss = {loss:.2f}")
         return losses
 
 
-# instantiate model
-m = DyeConcentrationOptimizer(wavelengths=unmixing_wavelengths, nr_of_dyes=nr_of_dyes)
-losses = m.train_loop(input_spectra=input_spectra, target_spectrum=target_spectrum)
+def optimize_dye_concentrations(target_spectrum: np.ndarray, unmixing_wavelengths: Union[np.ndarray, list],
+                                input_spectra: dict, plot_mixing_results: bool = True, n_iter: int = 10000,
+                                max_concentration: int = 5):
+    """
+    Optimize dye concentrations for a given target spectrum and input spectra.
+    """
+    if isinstance(target_spectrum, np.ndarray):
+        target_spectrum = torch.from_numpy(target_spectrum).type(torch.float32)
+    nr_of_dyes = len(input_spectra)
+    # instantiate model
+    input_spectra_array = torch.stack([torch.from_numpy(spectrum).type(torch.float32) for spectrum in input_spectra.values()])
 
-print(m.concentrations)
-conc = m.concentrations.detach()
-print(f"Mixing ratio: {100*conc[0]/conc.sum():.1f}:{100*conc[1]/conc.sum():.1f}")
+    dye_optim = DyeConcentrationOptimizer(wavelengths=unmixing_wavelengths, nr_of_dyes=nr_of_dyes,
+                                          n_iter=n_iter, max_concentration=max_concentration)
+    losses = dye_optim.train_loop(input_spectra=input_spectra_array, target_spectrum=target_spectrum)
 
-preds = m(input_spectra)
-preds = preds.detach().numpy()
-# plt.figure(figsize=(14, 7))
-plt.subplot(2, 1, 1)
-plt.title(f"Target spectrum {target_spectrum_name}")
-if target_spectrum_name == "Hb":
-    c = "blue"
-else:
-    c = "red"
-plt.semilogy(unmixing_wavelengths, target_spectrum.numpy(), label=target_spectrum_name, color=c)
-plt.semilogy(unmixing_wavelengths, preds, label="Mixed spectrum", color="green")
-plt.ylabel("Absorption coefficient $\mu_a'$ [$cm^{-1}$]")
-plt.xlabel("Wavelength [nm]")
-plt.legend()
-plt.subplot(2, 1, 2)
-for c_idx, (c_name, c_spectrum) in enumerate(chromophore_spectra_dict.items()):
-    concentration = m.concentrations.detach()[c_idx]
-    if concentration == 0:
-        continue
-    mixed_spectrum = concentration * chromophore_spectra_dict[c_name]
-    plt.semilogy(unmixing_wavelengths, mixed_spectrum,
-                 label=f"{c_name} ({DyeNames[c_name]}), c={concentration:.3f}",
-                 color=DyeColors[c_name])
-plt.legend()
-plt.title(f"Endmembers")
-plt.ylabel("Absorption coefficient $\mu_a'$ [$cm^{-1}$]")
-plt.xlabel("Wavelength [nm]")
-plt.tight_layout()
-plt.savefig("/home/kris/Data/Dye_project/Plots/optimized_dyes.png")
+    conc = dye_optim.concentrations.detach()
+    non_zeros = torch.where(conc > 1e-3)[0]
+    out_dict = {key: conc[idx].item() for idx, key in enumerate(input_spectra.keys()) if idx in non_zeros}
+    print(f"Non-zero concentrations: ", out_dict)
+
+    preds = dye_optim(input_spectra_array)
+    if plot_mixing_results:
+        preds = preds.detach().numpy()
+        # plt.figure(figsize=(14, 7))
+        plt.subplot(2, 1, 1)
+        plt.title(f"Target spectrum optimization")
+        plt.semilogy(unmixing_wavelengths, target_spectrum.numpy(), label="Target spectrum", color="red")
+        plt.semilogy(unmixing_wavelengths, preds, label="Mixed spectrum", color="green")
+        plt.ylabel("Absorption coefficient $\mu_a'$ [$cm^{-1}$]")
+        plt.xlabel("Wavelength [nm]")
+        plt.legend()
+        plt.subplot(2, 1, 2)
+        for c_idx, (c_name, c_spectrum) in enumerate(input_spectra.items()):
+            concentration = dye_optim.concentrations.detach()[c_idx]
+            if concentration == 0:
+                continue
+            mixed_spectrum = concentration * input_spectra[c_name]
+            plt.semilogy(unmixing_wavelengths, mixed_spectrum,
+                         label=f"{c_name} ({DyeNames[c_name]}), c={concentration:.3f}",
+                         color=DyeColors[c_name])
+        if len(non_zeros) <= 3:
+            plt.legend()
+        plt.title(f"Endmembers")
+        plt.ylabel("Absorption coefficient $\mu_a'$ [$cm^{-1}$]")
+        plt.xlabel("Wavelength [nm]")
+        plt.tight_layout()
+        # plt.savefig("/home/kris/Data/Dye_project/Plots/optimized_dyes.png")
+        plt.show()
+
+    return out_dict
+
+
+if __name__ == "__main__":
+    unmixing_wavelengths = np.arange(700, 851, 10)
+
+    abs_spectrum = load_iad_results("/home/kris/Data/Dye_project/Measured_Spectra/B93.npz")["mua"]
+    abs_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), abs_spectrum)
+
+    dye_spectra_dir = "/home/kris/Data/Dye_project/publication_data/Measured_Spectra/"
+    chromophore_spectra_dict = get_measured_spectra(spectra_dir=dye_spectra_dir,
+                                                    unmixing_wavelengths=unmixing_wavelengths)
+
+    _ = optimize_dye_concentrations(target_spectrum=abs_spectrum, unmixing_wavelengths=unmixing_wavelengths,
+                                    input_spectra=chromophore_spectra_dict, plot_mixing_results=True)
