@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import simpa as sp
 from ap.utils.io_iad_results import load_iad_results
 import os
+plt.switch_backend("TkAgg")
 
 
 def generate_tissue_spectra(nr_of_spectra: int,
@@ -18,7 +19,7 @@ def generate_tissue_spectra(nr_of_spectra: int,
     :return: list of newly sampled spectra
     """
 
-    np.random.seed(42)
+    # np.random.seed(42)
     abs_spectra = sp.AbsorptionSpectrumLibrary()
     new_spectra = list()
 
@@ -67,7 +68,4 @@ def save_spectra_in_iad_format(absorption_spectra: list, save_path: str, example
 if __name__ == "__main__":
     wavelengths = np.arange(650, 950)
     spectra_number = 18
-    generated_spectra = generate_tissue_spectra(spectra_number, wavelengths, plot_spectra=False)
-    folder_path = r"C:\Users\adm-dreherk\Documents\Cambridge\Dye Measurements\Example_spectra"
-    example_result = r"C:\Users\adm-dreherk\Documents\Cambridge\Dye Measurements\Kris\20230421\B03A\B03A.npz"
-    save_spectra_in_iad_format(generated_spectra, folder_path, example_result)
+    generated_spectra = generate_tissue_spectra(spectra_number, wavelengths, plot_spectra=True)
