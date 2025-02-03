@@ -9,17 +9,20 @@ plt.switch_backend("TkAgg")
 def generate_tissue_spectra(nr_of_spectra: int,
                             wavelength_range: np.ndarray,
                             max_number_of_mixed_spectra: int = 5,
-                            plot_spectra: bool = False) -> list:
+                            plot_spectra: bool = False,
+                            random_seed: None = None) -> list:
     """Mixes multiple tissue spectra from the simpa_recons library in order to create new tissue-based spectra.
 
     :param nr_of_spectra: number opf spectra that should be returned
     :param wavelength_range: numpy array with the exact wavelengths that should be used to create the spectra
     :param max_number_of_mixed_spectra: max number of the spectra that should be used as mixing components
     :param plot_spectra: flag whether to plot the spectra
+    :param random_seed: seed for the random number generator
     :return: list of newly sampled spectra
     """
 
-    # np.random.seed(42)
+    if random_seed is not None:
+        np.random.seed(random_seed)
     abs_spectra = sp.AbsorptionSpectrumLibrary()
     new_spectra = list()
 
