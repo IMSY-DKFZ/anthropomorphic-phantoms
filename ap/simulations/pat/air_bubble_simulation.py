@@ -87,7 +87,8 @@ for f_idx, (forearm_nr, forearm_path) in enumerate(forearm_dict.items()):
             run_seg_based_simulation(save_path=save_path, volume_name=volume_name,
                                      label_mask=label_mask,
                                      spacing=input_spacing, device_position=device_pos * input_spacing,
-                                     wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1])
+                                     wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1],
+                                     phantom_sos_adjustment=0, path_to_data=base_path)
         else:
             save_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{f_idx + 1}", "Simulations",
                                      forearm_path.replace("-labels.nrrd", ".hdf5"))

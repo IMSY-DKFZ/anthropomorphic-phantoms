@@ -3,8 +3,7 @@ import os
 from ap.utils.io_iad_results import load_iad_results
 from scipy.stats import linregress
 
-
-measurements_path = "/home/kris/Data/Dye_project/Measured_Spectra"
+# Dictionary mapping oxygenation levels to absorption spectra
 abs_dict = {
     0: "B90",
     0.3: "B93",
@@ -14,7 +13,7 @@ abs_dict = {
 }
 
 
-def correlate_spectrum(spectrum, wavelengths, oxy):
+def correlate_spectrum(spectrum, wavelengths, oxy, measurements_path):
     """
     Correlate a given spectrum with target absorption spectra for different oxygenation levels.
 
@@ -28,6 +27,8 @@ def correlate_spectrum(spectrum, wavelengths, oxy):
     :type wavelengths: numpy.ndarray
     :param oxy: The oxygenation level (0, 0.3, 0.5, 0.7, or 1) for which the target spectrum is loaded.
     :type oxy: float
+    :param measurements_path:
+    :type measurements_path: str
 
     :return: A tuple containing the slope, intercept, correlation coefficient (r_value), p-value, and standard error
              of the regression.

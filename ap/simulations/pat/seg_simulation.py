@@ -8,7 +8,8 @@ from ap.utils.default_settings import get_default_acoustic_settings, get_default
 
 
 def run_seg_based_simulation(save_path, volume_name, label_mask, spacing, device_position,
-                             wavelengths, forearm_nr: str = "Forearm_1", phantom_sos_adjustment: int = 0):
+                             wavelengths, forearm_nr: str = "Forearm_1", phantom_sos_adjustment: int = 0,
+                             path_to_data: str = "/path/to/data"):
     path_manager = sp.PathManager()
 
     labels_shape = label_mask.shape
@@ -26,7 +27,8 @@ def run_seg_based_simulation(save_path, volume_name, label_mask, spacing, device
     settings.set_volume_creation_settings({
         Tags.INPUT_SEGMENTATION_VOLUME: label_mask,
         Tags.SEGMENTATION_CLASS_MAPPING: segmentation_class_mapping(forearm_nr,
-                                                                    phantom_sos_adjustment=phantom_sos_adjustment),
+                                                                    phantom_sos_adjustment=phantom_sos_adjustment,
+                                                                    path_to_data=path_to_data),
 
     })
 

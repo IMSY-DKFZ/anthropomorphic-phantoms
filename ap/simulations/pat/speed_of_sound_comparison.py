@@ -76,11 +76,12 @@ for f_idx, (forearm_nr, forearm_path) in enumerate(forearm_dict.items()):
             save_path = os.path.join(base_path, "Paper_Results", "PAT_Simulations", f"Phantom_0{f_idx + 1}", forearm_path)
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
-            # run_seg_based_simulation(save_path=save_path, volume_name=volume_name,
-            #                          label_mask=label_mask,
-            #                          spacing=input_spacing, device_position=device_pos * input_spacing,
-            #                          wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1],
-            #                          phantom_sos_adjustment=sos_adjustment)
+            run_seg_based_simulation(save_path=save_path, volume_name=volume_name,
+                                     label_mask=label_mask,
+                                     spacing=input_spacing, device_position=device_pos * input_spacing,
+                                     wavelengths=wavelengths, forearm_nr=forearm_nr.split("_")[-1],
+                                     phantom_sos_adjustment=sos_adjustment,
+                                     path_to_data=base_path)
 
         else:
             save_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{f_idx + 1}", "Simulations",

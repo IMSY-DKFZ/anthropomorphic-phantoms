@@ -16,7 +16,7 @@ hb_spectrum, hbo2_spectrum = hb_spectrum.values, hbo2_spectrum.values
 hb_spectrum = np.interp(unmixing_wavelengths, wavelengths, hb_spectrum)
 hbo2_spectrum = np.interp(unmixing_wavelengths, wavelengths, hbo2_spectrum)
 
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
+dye_spectra_dir = "/path/to/publication_data/Measured_Spectra"
 
 spectrum_B30 = load_iad_results(os.path.join(dye_spectra_dir, "B30.npz"))["mua"]
 spectrum_B30 = np.interp(unmixing_wavelengths, np.arange(650, 950), spectrum_B30)
@@ -262,7 +262,7 @@ plt.legend(fancybox=True, framealpha=0)
 
 
 plt.tight_layout()
-plt.savefig(f"/home/kris/Data/Dye_project/Plots/spectrum_comparison.png", dpi=400, transparent=True)
+plt.savefig(f"/path/to/publication_data/Plots/spectrum_comparison.png", dpi=400, transparent=True)
 plt.close()
 
 

@@ -38,7 +38,7 @@ def get_default_das_reconstruction_settings():
     }
 
 
-def segmentation_class_mapping(forearm_nr, phantom_sos_adjustment=0):
+def segmentation_class_mapping(forearm_nr, phantom_sos_adjustment=0, path_to_data: str = "/path/to/data"):
     ret_dict = dict()
     ret_dict[1] = (sp.MolecularCompositionGenerator()
                    .append(sp.MOLECULE_LIBRARY.heavy_water())
@@ -46,9 +46,9 @@ def segmentation_class_mapping(forearm_nr, phantom_sos_adjustment=0):
     ret_dict[2] = (sp.MolecularCompositionGenerator()
                    .append(sp.MOLECULE_LIBRARY.water())
                    .get_molecular_composition(2))
-    ret_dict[3] = get_background_tissue(forearm_nr, phantom_sos_adjustment)
+    ret_dict[3] = get_background_tissue(forearm_nr, phantom_sos_adjustment, path_to_data)
     for i in range(4, 9):
-        ret_dict[i] = get_vessel_tissue(i, phantom_sos_adjustment)
+        ret_dict[i] = get_vessel_tissue(i, phantom_sos_adjustment, path_to_data)
     ret_dict[9] = (sp.MolecularCompositionGenerator()
                    .append(sp.MOLECULE_LIBRARY.mediprene())
                    .get_molecular_composition(2))
