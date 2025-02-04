@@ -32,7 +32,7 @@ def top_x_percent_indices(array, mask, x_percent):
 
 
 if __name__ == "__main__":
-    image_path = "/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/Reconstructions_das/Study_28/Scan_7_recon.hdf5"
+    image_path = "/path/to/PAT_Data/Phantom_01/Scan_25_recon.hdf5"
     recon = sp.load_data_field(image_path, sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
     recon_array = np.stack(
         [np.rot90(recon[str(wl)], 3) for wl in sp.load_data_field(image_path, sp.Tags.SETTINGS)[sp.Tags.WAVELENGTHS]])
