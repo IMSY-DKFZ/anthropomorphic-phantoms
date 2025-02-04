@@ -10,6 +10,19 @@ plt.rcParams.update({'font.size': 12,
 plt.switch_backend("TkAgg")
 
 
+try:
+    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
+    print("This runner script is invoked in a bash script!")
+except KeyError:
+    run_by_bash: bool = False
+
+if run_by_bash:
+    base_path = os.environ["BASE_PATH"]
+else:
+    # In case the script is run from an IDE, the base path has to be set manually
+    base_path = "/path/to/publication_data/"
+
+
 def calculate_mean_std_ci(arr, mask=None, aggregate_over_structures=True):
     if mask is not None:
         if isinstance(mask, tuple):
@@ -92,19 +105,6 @@ def calculate_error_along_depth(data, mask, aggregate_over_structures=True):
         depth_error_mean = np.nanmean(data, axis=depth_axis)
         depth_error_std = np.nanstd(data, axis=depth_axis)
     return depth_error_mean, depth_error_std
-
-
-try:
-    run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
-    print("This runner script is invoked in a bash script!")
-except KeyError:
-    run_by_bash: bool = False
-
-if run_by_bash:
-    base_path = os.environ["BASE_PATH"]
-else:
-    # In case the script is run from an IDE, the base path has to be set manually
-    base_path = ""
 
 
 if __name__ == "__main__":

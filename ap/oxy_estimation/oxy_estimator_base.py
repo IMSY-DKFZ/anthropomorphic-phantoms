@@ -16,6 +16,9 @@ class OxyEstimator:
         self.config = config
         self.estimation_type = self.config.get('estimation_type', 'physiological')
         self.unmixing_wavelengths = self.config.get('unmixing_wavelengths', np.arange(700, 851, 10))
+        self.path_to_measured_spectra = self.config.get('spectra_path', None)
+        if self.path_to_measured_spectra is None:
+            raise ValueError("Path to measured spectra must be provided.")
         self.spectral_basis = self.load_spectral_components()
 
     def estimate(self, input_data):
@@ -47,7 +50,8 @@ class OxyEstimator:
         Load the physiological spectral components (oxy- and deoxyhemoglobin).
         """
         hbo2_spectrum, hb_spectrum = sp.get_simpa_internal_absorption_spectra_by_names(
-            [sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_OXYHEMOGLOBIN, sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_DEOXYHEMOGLOBIN]
+            [sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_OXYHEMOGLOBIN,
+             sp.Tags.SIMPA_NAMED_ABSORPTION_SPECTRUM_DEOXYHEMOGLOBIN]
         )
         wavelengths = hb_spectrum.wavelengths
         hb_spectrum, hbo2_spectrum = hb_spectrum.values, hbo2_spectrum.values
@@ -59,10 +63,9 @@ class OxyEstimator:
         """
         Load the proxy spectral components from measured data.
         """
-        base_path = "/home/kris/Data/Dye_project/Measured_Spectra"
-        hb_abs_spectrum = load_iad_results(os.path.join(base_path, "B90.npz"))["mua"]
+        hb_abs_spectrum = load_iad_results(os.path.join(self.path_to_measured_spectra, "B90.npz"))["mua"]
         hb_abs_spectrum = np.interp(self.unmixing_wavelengths, np.arange(650, 950), hb_abs_spectrum)
-        hbo2_abs_spectrum = load_iad_results(os.path.join(base_path, "BIR.npz"))["mua"]
+        hbo2_abs_spectrum = load_iad_results(os.path.join(self.path_to_measured_spectra, "BIR3.npz"))["mua"]
         hbo2_abs_spectrum = np.interp(self.unmixing_wavelengths, np.arange(650, 950), hbo2_abs_spectrum)
         return np.vstack([hbo2_abs_spectrum, hb_abs_spectrum]).T
 

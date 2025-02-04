@@ -4,9 +4,8 @@ import simpa as sp
 import nrrd
 import os
 import json
-plt.switch_backend("TkAgg")
-
 from ap.oxy_estimation.linear_unmixing import LinearUnmixingOxyEstimator
+plt.switch_backend("TkAgg")
 
 if __name__ == "__main__":
 
@@ -24,8 +23,9 @@ if __name__ == "__main__":
 
     wavelengths = np.arange(710, 851, 10)
     estimator = LinearUnmixingOxyEstimator({
-        'estimation_type': 'proxy',
-        "unmixing_wavelengths": wavelengths
+        "estimation_type": "proxy",
+        "unmixing_wavelengths": wavelengths,
+        "spectra_path": os.path.join(base_path, "Measured_Spectra")
     })
     z_det_pos = 152
 

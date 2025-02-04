@@ -89,7 +89,7 @@ def unmix_so2(data_to_unmix, wavelengths: np.ndarray = np.arange(700, 851, 10)):
 
 
 def unmix_so2_proxy(data_to_unmix, wavelengths: np.ndarray = np.arange(700, 851, 10)):
-    base_path = "/home/kris/Data/Dye_project/Measured_Spectra"
+    base_path = "/path/to/publication_data/Measured_Spectra"
     hb_abs_spectrum = load_iad_results(os.path.join(base_path, "B90.npz"))["mua"]
     hb_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hb_abs_spectrum)
 

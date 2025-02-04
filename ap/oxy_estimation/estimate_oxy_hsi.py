@@ -24,8 +24,9 @@ if __name__ == "__main__":
     wavelengths = np.arange(700, 851, 10)
     hsi_wavelengths = np.arange(500, 1000, 5)
     estimator = LinearUnmixingOxyEstimator({
-        'estimation_type': 'proxy',
-        "unmixing_wavelengths": wavelengths
+        "estimation_type": "proxy",
+        "unmixing_wavelengths": wavelengths,
+        "spectra_path": os.path.join(base_path, "Measured_Spectra")
     })
 
     examples_images = {

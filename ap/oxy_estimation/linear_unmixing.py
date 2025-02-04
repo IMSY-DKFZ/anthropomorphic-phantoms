@@ -71,24 +71,33 @@ class LinearUnmixingOxyEstimator(OxyEstimator):
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import nrrd
+    import os
+    plt.switch_backend("TkAgg")
     # Example usage
+    base_path = "/path/to/publication_data"
+
     config = {
-        'estimation_type': 'proxy',
-        "unmixing_wavelengths": np.arange(700, 851, 10)
+        "estimation_type": "proxy",
+        "unmixing_wavelengths": np.arange(700, 851, 10),
+        "spectra_path": os.path.join(base_path, "Measured_Spectra")
     }
     estimator = LinearUnmixingOxyEstimator(config)
-    path = "/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/US_analysis/Study_25/Forearm_1.hdf5"
-    reconstruction = sp.load_data_field(path, sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
+
+    file_path = os.path.join(base_path, "PAT_Data", "Phantom_01", "Scan_25")
+
+    reconstruction = sp.load_data_field(file_path + "_recon.hdf5", sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
     wavelengths = np.arange(700, 851, 10)
     reconstruction_array = np.stack([np.rot90(reconstruction[str(wl)][:, :, ...], 3) for wl in wavelengths])
-    labels, _ = nrrd.read("/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/US_analysis/Study_25/Scan_25_pa-labels.nrrd")
+    labels, _ = nrrd.read(file_path + "_pa-labels.nrrd")
     labels = np.squeeze(labels)
     wavelengths = np.arange(700, 851, 10)
     oxy_estimates = estimator.estimate(reconstruction_array)
 
+    device_pos = 152
+
     plt.subplot(1, 2, 1)
     plt.imshow(reconstruction_array[0, :, :])
-    plt.imshow(labels.T, alpha=0.2)
+    plt.imshow(labels.T[device_pos:device_pos+200, :], alpha=0.2)
     plt.subplot(1, 2, 2)
     plt.imshow(oxy_estimates)
     plt.show()

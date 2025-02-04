@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import glob
 plt.switch_backend("TkAgg")
 
-base_path = "/home/kris/Data/Dye_project/publication_data/"
+base_path = "/path/to/publication_data/publication_data/"
 visualize = True
 
 publication_data = sorted(glob.glob(os.path.join(base_path, "PAT_Data", "Phantom_*", "Scan_*_recon*")))

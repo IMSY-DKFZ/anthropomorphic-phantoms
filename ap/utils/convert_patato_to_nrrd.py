@@ -18,7 +18,3 @@ def convert_patato_output_to_nrrd(file_path):
 
     save_path = os.path.join(base_path, file_name + ".nrrd")
     nrrd.write(save_path, recon)
-
-
-if __name__ == "__main__":
-    convert_patato_output_to_nrrd("/home/kris/Data/Dye_project/phantom_data/KrisPhantoms_01_processed/Scan_9.hdf5")

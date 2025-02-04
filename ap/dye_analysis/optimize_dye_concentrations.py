@@ -210,7 +210,7 @@ def optimize_dye_concentrations(target_spectrum: np.ndarray, unmixing_wavelength
         plt.ylabel("Absorption coefficient $\mu_a'$ [$cm^{-1}$]")
         plt.xlabel("Wavelength [nm]")
         plt.tight_layout()
-        # plt.savefig("/home/kris/Data/Dye_project/Plots/optimized_dyes.png")
+        # plt.savefig("/path/to/publication_data/Plots/optimized_dyes.png")
         plt.show()
 
     return out_dict
@@ -219,10 +219,10 @@ def optimize_dye_concentrations(target_spectrum: np.ndarray, unmixing_wavelength
 if __name__ == "__main__":
     unmixing_wavelengths = np.arange(700, 851, 10)
 
-    abs_spectrum = load_iad_results("/home/kris/Data/Dye_project/Measured_Spectra/B93.npz")["mua"]
+    abs_spectrum = load_iad_results("/path/to/publication_data/Measured_Spectra/B93.npz")["mua"]
     abs_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), abs_spectrum)
 
-    dye_spectra_dir = "/home/kris/Data/Dye_project/publication_data/Measured_Spectra/"
+    dye_spectra_dir = "/path/to/publication_data/Measured_Spectra/"
     chromophore_spectra_dict = get_measured_spectra(spectra_dir=dye_spectra_dir,
                                                     unmixing_wavelengths=unmixing_wavelengths)
 

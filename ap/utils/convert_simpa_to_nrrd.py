@@ -25,7 +25,7 @@ def convert_simpa_output_to_nrrd(file_path, all_wave_lengths=False):
 
 
 if __name__ == "__main__":
-    base_path = f"/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/US_analysis/"
+    base_path = f"/path/to/publication_data/PAT_Data/iThera_2_data/US_analysis/"
     files = glob(os.path.join(base_path, "Study*", "*.hdf5"))
 
     for file in files:
@@ -34,4 +34,4 @@ if __name__ == "__main__":
         except KeyError:
             continue
 
-    # convert_simpa_output_to_nrrd("/home/kris/Data/Dye_project/PAT_Data/iThera_2_data/Reconstructions_das/Study_26/Scan_4_recon.hdf5", all_wave_lengths=False)
+    # convert_simpa_output_to_nrrd("/path/to/publication_data/PAT_Data/iThera_2_data/Reconstructions_das/Study_26/Scan_4_recon.hdf5", all_wave_lengths=False)

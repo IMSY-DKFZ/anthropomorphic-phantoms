@@ -59,7 +59,7 @@ target_spectrum = np.interp(unmixing_wavelengths, wavelengths, target_spectra[ta
 icg_wl, icg_mua = load_icg()
 icg_mua = np.interp(unmixing_wavelengths, icg_wl, icg_mua)
 
-dye_spectra_dir = "/home/kris/Data/Dye_project/Measured_Spectra"
+dye_spectra_dir = "/path/to/publication_data/Measured_Spectra"
 example_spectra = os.listdir(dye_spectra_dir)
 
 chromophore_spectra_dict = OrderedDict()
