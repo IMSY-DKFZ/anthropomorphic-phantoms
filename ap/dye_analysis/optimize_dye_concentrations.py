@@ -17,33 +17,75 @@ plt.switch_backend("TkAgg")
 
 class DyeConcentrationOptimizer(nn.Module):
     """
-    Pytorch model for custom gradient optimization of dye concentrations.
+    PyTorch model for custom gradient optimization of dye concentrations.
+
+    This module implements an optimization model to determine the optimal dye
+    concentrations that best match a target spectrum when mixed with a set of
+    input spectra. It uses a gradient-based approach with a custom loss function
+    that can incorporate spectral derivative constraints.
+
+    :param wavelengths: 1D tensor or array representing the wavelengths corresponding to the spectra.
+    :param nr_of_dyes: Integer specifying the number of dyes (i.e., the number of concentrations to optimize).
+    :param n_iter: Number of optimization iterations. Defaults to 10000.
+    :param max_concentration: Maximum allowable concentration value for each dye. Defaults to 5.
+
+    . note::
+       The initial dye concentrations are randomly sampled from a uniform distribution
+       between 0 and 0.1.
     """
 
     def __init__(self, wavelengths, nr_of_dyes, n_iter=10000, max_concentration=5):
         super().__init__()
         self.nr_of_dyes = nr_of_dyes
         self.wavelengths = wavelengths
-        # initialize weights with random numbers
+        # Initialize dye concentrations with random values sampled uniformly between 0 and 0.1.
         concentrations = torch.distributions.Uniform(0, 0.1).sample((nr_of_dyes,))
-        # make weights torch parameters
+        # Make the concentrations a learnable parameter.
         self.concentrations = nn.Parameter(concentrations)
         self.max_concentration = max_concentration
         self.n_iter = n_iter
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
 
     def forward(self, X):
-        """Implement function to be optimised. In this case, a simple matrix multiplication.,
+        """
+        Compute the mixed spectrum as a weighted sum of the input spectra.
+
+        The mixed spectrum is computed via matrix multiplication between the dye
+        concentrations and the input spectra.
+
+        :param X: Tensor of input spectra with shape (nr_of_dyes, number of wavelengths).
+        :return: Tensor representing the mixed spectrum.
         """
         mixed_spectrum = torch.matmul(self.concentrations, X)
         return mixed_spectrum
 
     @staticmethod
     def derive(inp):
+        """
+        Compute the finite difference (first derivative) of the input spectrum.
+
+        This method calculates the difference between successive elements in the input
+        tensor, which approximates the derivative of the spectrum.
+
+        :param inp: 1D tensor or array representing a spectrum.
+        :return: Tensor representing the finite difference (approximate derivative) of the input.
+        """
         out = inp[:-1] - inp[1:]
         return out
 
     def loss(self, prediction, target):
+        """
+        Compute the loss between the predicted and target spectra.
+
+        The loss is computed based on the L1 loss between the predicted and target spectra.
+        Additional derivative loss terms (first and second derivatives) are calculated but are
+        currently not included in the final loss value. To incorporate these terms, adjust the
+        returned loss accordingly.
+
+        :param prediction: Tensor representing the predicted mixed spectrum.
+        :param target: Tensor representing the target spectrum.
+        :return: Scalar tensor representing the computed loss.
+        """
         pred_der = self.derive(prediction)
         target_der = self.derive(target)
         derivative_loss = F.l1_loss(pred_der, target_der)
@@ -51,14 +93,25 @@ class DyeConcentrationOptimizer(nn.Module):
         weighted_loss = F.l1_loss(prediction, target)
         abs_loss = torch.sqrt(F.mse_loss(prediction, target))
         l1_loss = F.l1_loss(prediction, target)
+        # Currently, only the weighted L1 loss is used.
         return weighted_loss#abs_loss + weighted_loss + 2*derivative_loss + 4*derivative_2_loss
 
     def train_loop(self, input_spectra, target_spectrum):
-        """optimizing loop for minimizing given loss term.
+        """
+        Run the optimization loop to minimize the loss between the predicted and target spectra.
 
-        :param input_spectra: spectra of possible endmembers
-        :param target_spectrum:
-        :return: list of losses
+        This function iteratively performs the following steps for a number of iterations specified
+        by ``self.n_iter``:
+
+          - Compute the predicted mixed spectrum using the ``forward`` method.
+          - Calculate the loss between the prediction and the target spectrum using the custom loss function.
+          - Perform backpropagation and update the dye concentrations using the Adam optimizer.
+          - Clamp the dye concentrations to ensure they remain between 0 and ``self.max_concentration``.
+          - Record the loss for monitoring the optimization process.
+
+        :param input_spectra: Tensor of input spectra (endmembers) with shape (nr_of_dyes, number of wavelengths).
+        :param target_spectrum: Tensor representing the target mixed spectrum.
+        :return: List of loss values recorded at each iteration.
         """
         losses = []
         for i in (pbar := tqdm(range(self.n_iter))):
@@ -78,12 +131,48 @@ def optimize_dye_concentrations(target_spectrum: np.ndarray, unmixing_wavelength
                                 input_spectra: dict, plot_mixing_results: bool = True, n_iter: int = 10000,
                                 max_concentration: int = 5):
     """
-    Optimize dye concentrations for a given target spectrum and input spectra.
+    Optimize dye concentrations to best approximate a target spectrum using a mixture of input spectra.
+
+    This function employs the ``DyeConcentrationOptimizer`` to determine the optimal dye
+    concentrations such that a weighted combination of provided input spectra matches a given
+    target spectrum. The optimization is performed using gradient-based techniques over a specified
+    number of iterations. Optionally, the function can display plots illustrating the target spectrum,
+    the resulting mixed spectrum, and the contributions of individual dyes.
+
+    :param target_spectrum: The target absorption spectrum to approximate. If provided as a NumPy array,
+                            it is converted to a PyTorch tensor of type ``torch.float32``.
+    :type target_spectrum: np.ndarray
+
+    :param unmixing_wavelengths: A 1D array or list of wavelengths (in nm) over which the spectra are defined
+                                 and to which all spectra will be interpolated.
+    :type unmixing_wavelengths: Union[np.ndarray, list]
+
+    :param input_spectra: A dictionary mapping dye names to their corresponding absorption spectra
+                          (each as a NumPy array). These spectra represent the endmembers used in the mixing model.
+    :type input_spectra: dict
+
+    :param plot_mixing_results: If True, plots comparing the target spectrum with the mixed spectrum and
+                                the individual contributions of dyes will be displayed. Defaults to True.
+    :type plot_mixing_results: bool
+
+    :param n_iter: The number of iterations to run the optimization loop. Defaults to 10000.
+    :type n_iter: int
+
+    :param max_concentration: The maximum allowable concentration for each dye during optimization. Defaults to 5.
+    :type max_concentration: int
+
+    :return: A dictionary mapping dye names (with non-zero optimized concentrations) to their optimized
+             concentration values.
+    :rtype: dict
+
+    . note::
+       This function expects the global variables ``DyeNames`` and ``DyeColors`` to be defined. These
+       are used for labeling and coloring the plots when ``plot_mixing_results`` is set to True.
     """
     if isinstance(target_spectrum, np.ndarray):
         target_spectrum = torch.from_numpy(target_spectrum).type(torch.float32)
     nr_of_dyes = len(input_spectra)
-    # instantiate model
+    # Instantiate the model by stacking input spectra as a tensor.
     input_spectra_array = torch.stack([torch.from_numpy(spectrum).type(torch.float32) for spectrum in input_spectra.values()])
 
     dye_optim = DyeConcentrationOptimizer(wavelengths=unmixing_wavelengths, nr_of_dyes=nr_of_dyes,
