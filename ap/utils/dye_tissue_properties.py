@@ -15,11 +15,11 @@ seg_dict = {
 
 def get_vessel_molecule(oxygenation: float = 1.0, phantom_sos_adjustment: int = 0, path_to_data: str = "/path/to/data"):
     vessel_oxy_path_dict = {
-        0.0: load_iad_results(os.path.join(path_to_data, "B90.npz")),
-        0.3: load_iad_results(os.path.join(path_to_data, "B93.npz")),
-        0.5: load_iad_results(os.path.join(path_to_data, "B95.npz")),
-        0.7: load_iad_results(os.path.join(path_to_data, "B97.npz")),
-        1.0: load_iad_results(os.path.join(path_to_data, "BIR.npz")),
+        0.0: load_iad_results(os.path.join(path_to_data, "Measured_Spectra", "B90.npz")),
+        0.3: load_iad_results(os.path.join(path_to_data, "Measured_Spectra", "B93.npz")),
+        0.5: load_iad_results(os.path.join(path_to_data, "Measured_Spectra", "B95.npz")),
+        0.7: load_iad_results(os.path.join(path_to_data, "Measured_Spectra", "B97.npz")),
+        1.0: load_iad_results(os.path.join(path_to_data, "Measured_Spectra", "BIR3.npz")),
     }
     mua = vessel_oxy_path_dict[oxygenation]["mua"]
     mus = vessel_oxy_path_dict[oxygenation]["mus"]
@@ -42,7 +42,7 @@ def get_vessel_molecule(oxygenation: float = 1.0, phantom_sos_adjustment: int = 
 
 
 def get_background_molecule(forearm_nr: int = 1, phantom_sos_adjustment: int = 0, path_to_data: str = "/path/to/data"):
-    data = load_iad_results(os.path.join(path_to_data, f"BF{forearm_nr}.npz"))
+    data = load_iad_results(os.path.join(path_to_data, "Measured_Spectra", f"BF{forearm_nr}.npz"))
     mua = data["mua"]
     mus = data["mus"]
     wavelengths = data["wavelengths"]

@@ -39,7 +39,7 @@ def correlate_spectrum(spectrum, wavelengths, oxy, measurements_path):
     hb_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hb_abs_spectrum)
 
     # Load and interpolate the absorption spectrum for oxygenated hemoglobin (BIR)
-    hbo2_abs_spectrum = load_iad_results(os.path.join(measurements_path, "BIR.npz"))["mua"]
+    hbo2_abs_spectrum = load_iad_results(os.path.join(measurements_path, "BIR3.npz"))["mua"]
     hbo2_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hbo2_abs_spectrum)
 
     # Load and interpolate the target absorption spectrum for the specified oxygenation level
