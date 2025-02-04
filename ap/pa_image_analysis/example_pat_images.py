@@ -110,7 +110,8 @@ for forearm_nr, forearm_specs in examples_images.items():
         slope, intercept, r_value, p_value, std_err, target_spectrum, target_std = correlate_spectrum(
             vessel_spectrum,
             wavelengths=wavelengths,
-            oxy=forearm_specs["oxy"])
+            oxy=forearm_specs["oxy"],
+            measurements_path=measurements_path)
 
         json_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
                                  f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.json")
