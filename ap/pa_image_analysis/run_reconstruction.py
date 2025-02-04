@@ -16,7 +16,7 @@ from simpa.core.simulation_modules.reconstruction_module.reconstruction_utils im
     tukey_bandpass_filtering_with_settings
 
 
-base_path = "/home/kris/Data/Dye_project/publication_data/"
+base_path = "/path/to/publication/data"
 frame_averaging = (9, 13)
 scans = sorted(glob.glob(os.path.join(base_path, "PAT_Data", "Phantom_*", "Scan_*_time_series*")))
 recon_settings = get_default_das_reconstruction_settings()
