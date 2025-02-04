@@ -2,7 +2,6 @@ import numpy as np
 from ap.dye_analysis.potential_target_spectra import get_target_spectrum
 from ap.dye_analysis.measured_spectra import get_measured_spectra
 from ap.dye_analysis.optimize_dye_concentrations import optimize_dye_concentrations
-import simpa as sp
 
 
 dye_spectra_dir = "/Path/to/publication_data/Measured_Spectra/"
