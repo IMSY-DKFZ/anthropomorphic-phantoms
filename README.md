@@ -86,6 +86,8 @@ or
 This script will run all experiments in the correct order and save the results in 
 the `publication_data/Paper_Results` folder.
 
+The experiments can also be run separately by running the corresponding `.py` scripts indicated in `reproduce_paper.sh`.
+
 ## Run reconstructions
 
 We provide the raw time series data of the PA images in the `publication_data/PAT_Data` folder with the filenames
@@ -97,7 +99,8 @@ The reconstructed images will be saved in the `Paper_Results/PAT_Reconstructions
 ## Run simulations
 
 Similarly, the simulations can be run with the `air_bubble_simulation.py` and `speed_of_sound_comparison-py` scripts
-in the `ap/simulations/pat` directory. The results will be saved in the `Paper_Results/PAT_Simulations` folder.
+in the `ap/simulations/pat` directory. They can also be run by setting RUN_SIMULATION="True" in `reproduce_paper.sh`.
+The results will be saved in the `Paper_Results/PAT_Simulations` folder.
 Make sure that you have simpa installed and all the requirements that it needs. Please refer to the 
 [simpa GitHub page](https://github.com/IMSY-DKFZ/simpa) for all instructions.
 
