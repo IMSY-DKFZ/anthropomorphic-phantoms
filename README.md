@@ -1,4 +1,4 @@
-# Photoacoustic and Hyperspectral Imaging Python Package
+# Anthropomorphic phantoms with tissue-mimicking spectra
 
 This repository contains code for the paper "Anthropomorphic tissue-mimicking phantoms for oximetry validation based on 
 multispectral optical imaging", see [Paper](TODO) that was published in tje Journal of Biomedical Optics 2025.
@@ -10,7 +10,7 @@ The package includes the following functionalities:
   - Analysis of PA and HSI data
   - Simulation of PA data as quality assurance
   - Spectral linear unmixing for optical absorption spectra
-- Combination of absorption spectra to create tissue mimicking spectra
+- Combination of absorption spectra to create tissue-mimicking spectra
 
 Project Organization
 ------------
@@ -40,7 +40,8 @@ Project Organization
 
 # Installation and setup
 To install this repository and its dependencies, you need to run the following commands:
-1. Make sure that you have your preferred virtual environment activated with one of the following commands:
+1. Make sure that you have your preferred virtual environment activated (we recommend Python 3.10) with 
+    one of the following commands:
     * `virtualenv ap` and then `source ap/bin/activate`
     * `conda create -n ap` and then `conda activate ap`
 2. Install the project by running `pip install .` in the `anthropomorphic-phantoms` directory.
