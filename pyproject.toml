@@ -7,7 +7,8 @@ name = "ap"
 version = "0.0.1"
 description = "Anthropomorphic Phantoms"
 authors = [
-  { name="Kris Dreher", email="k.dreher@dkfz-heidelberg.de" },
+  { name="Kris K. Dreher", email="k.dreher@dkfz-heidelberg.de" },
+    {name = "Division of Intelligent Medical Systems (IMSY), DKFZ"}
 ]
 readme = "README.md"
 requires-python = ">=3.8,<3.12"
@@ -31,4 +32,7 @@ dependencies = [
 # All the following settings are optional:
 include = ["*"]  # ["*"] by default
 
-[project.scripts]
+[project.urls]
+Homepage = "https://github.com/IMSY-DKFZ/anthropomorphic-phantoms"
+Repository = "https://github.com/IMSY-DKFZ/anthropomorphic-phantoms"
+Paper = "DOI: LINK TODO"
