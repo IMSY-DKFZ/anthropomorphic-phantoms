@@ -20,7 +20,7 @@ if run_by_bash:
     base_path = os.environ["BASE_PATH"]
 else:
     # In case the script is run from an IDE, the base path has to be set manually
-    base_path = "/home/kris/Data/Dye_project/publication_data_with_results/"
+    base_path = ""
 
 
 def calculate_mean_std_ci(arr, mask=None, aggregate_over_structures=True):

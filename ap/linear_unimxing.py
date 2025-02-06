@@ -88,12 +88,11 @@ def unmix_so2(data_to_unmix, wavelengths: np.ndarray = np.arange(700, 851, 10)):
     return so2
 
 
-def unmix_so2_proxy(data_to_unmix, wavelengths: np.ndarray = np.arange(700, 851, 10)):
-    base_path = "/path/to/publication_data/Measured_Spectra"
-    hb_abs_spectrum = load_iad_results(os.path.join(base_path, "B90.npz"))["mua"]
+def unmix_so2_proxy(data_to_unmix, wavelengths: np.ndarray = np.arange(700, 851, 10), path_to_spectra: str = None):
+    hb_abs_spectrum = load_iad_results(os.path.join(path_to_spectra, "B90.npz"))["mua"]
     hb_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hb_abs_spectrum)
 
-    hbo2_abs_spectrum = load_iad_results(os.path.join(base_path, "BIR3.npz"))["mua"]
+    hbo2_abs_spectrum = load_iad_results(os.path.join(path_to_spectra, "BIR3.npz"))["mua"]
     hbo2_abs_spectrum = np.interp(wavelengths, np.arange(650, 950), hbo2_abs_spectrum)
 
     chromophore_spectra_dict = OrderedDict()
