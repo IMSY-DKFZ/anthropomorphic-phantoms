@@ -23,7 +23,7 @@ python3 oxy_estimation/estimate_oxy_pa.py
 python3 oxy_estimation/evaluate_oxy.py
 
 # For the supplementary material, we ran some simulations
-# To rerun the simulations, set RUN_SIMULATION="True" and uncomment the following lines.
+# To rerun the simulations, set RUN_SIMULATION="True".
 
 export RUN_SIMULATION="False"
 export VISUALIZE="False"
