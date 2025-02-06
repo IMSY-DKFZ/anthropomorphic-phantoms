@@ -11,6 +11,8 @@ from matplotlib_scalebar.scalebar import ScaleBar
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.lines import Line2D
 import json
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
 
 recon_method = "das"
 
@@ -120,17 +122,20 @@ for forearm_nr, forearm_specs in examples_images.items():
         json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
                   open(json_path, "w"))
 
+        p_value_for_legend = f"p-value={p_value:.2f}" if p_value > 0.01 else f"p-value<0.01"
+        unmixed_result = unmix_so2_proxy(
+            vessel_spectrum * slope + intercept, wavelengths=wavelengths, path_to_spectra=measurements_path)
+
         plt.subplot(2, 1, 2)
 
         plt.title(
             f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
-            f"{unmix_so2_proxy(vessel_spectrum * slope + intercept, wavelengths=wavelengths):.2f} % and "
-            f"{unmix_so2_proxy(vessel_spectrum, wavelengths=wavelengths):.2f} % (uncorrelated)")
+            f"{unmixed_result:.2f} %")
         plt.ylabel("Absorption coefficient [$cm^{-1}$]")
         plt.xlabel("Photoacoustic signal [a.u.]")
         plt.scatter(vessel_spectrum, target_spectrum, color="green", label=f"Measured PA signal")
         plt.plot(vessel_spectrum, vessel_spectrum * slope + intercept, color="black",
-                 label=f"Correlation (R={r_value:.2f}, p-value={p_value:.2f})")
+                 label=f"Correlation (R={r_value:.2f}, {p_value_for_legend})")
 
         ax = plt.gca()
         ins = ax.inset_axes((0.7, 0.2, 0.2, 0.2))

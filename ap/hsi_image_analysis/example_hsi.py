@@ -6,9 +6,10 @@ from matplotlib.lines import Line2D
 
 from htc import DataPath
 from ap.linear_unimxing import unmix_so2_proxy
-from ap.utils.io_iad_results import load_iad_results
 from ap.utils.correlate_spectrum_to_oxies import correlate_spectrum
 import json
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
 
 try:
     run_by_bash: bool = bool(os.environ["RUN_BY_BASH"])
@@ -76,14 +77,18 @@ for forearm_nr, forearm_specs in examples_images.items():
     print(f"Slope: {slope:.2f}, Intercept: {intercept:.2f}, R-value: {r_value:.2f}, "
           f"p-value: {p_value:.2f}, Std Error: {std_err:.2f}")
 
+    p_value_for_legend = f"p-value={p_value:.2f}" if p_value > 0.01 else f"p-value<0.01"
+    unmixed_result = unmix_so2_proxy(
+        absorption * slope + intercept, wavelengths=wavelengths, path_to_spectra=measurements_path)
+
     axes[1].set_title(
         f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
-        f"{unmix_so2_proxy(absorption * slope + intercept, wavelengths=wavelengths):.2f} %")
+        f"{unmixed_result:.2f} %")
     axes[1].set_xlabel(f"HS signal adapted with Lambert-Beer approx. [a.u.]")
     axes[1].set_ylabel(f"Absorption coefficient [$cm^{-1}$]")
     axes[1].scatter(absorption, target_spectrum, color="green", label=f"Measured HS signal")
     axes[1].plot(sorted(absorption), np.array(sorted(absorption)) * slope + intercept, color="black",
-             label=f"Correlation (R={r_value:.2f}, p-value={p_value:.2f})")
+                 label=f"Correlation (R={r_value:.2f}, {p_value_for_legend})")
 
     ins = axes[1].inset_axes((0.7, 0.2, 0.2, 0.2))
     ins.plot(wavelengths, absorption*slope + intercept, color="green")
