@@ -20,7 +20,7 @@ if run_by_bash:
     base_path = os.environ["BASE_PATH"]
 else:
     # In case the script is run from an IDE, the base path has to be set manually
-    base_path = "/path/to/publication_data/"
+    base_path = "/home/kris/Data/Dye_project/publication_data_with_results/"
 
 
 def calculate_mean_std_ci(arr, mask=None, aggregate_over_structures=True):
@@ -248,18 +248,18 @@ if __name__ == "__main__":
                                        np.mean([ci[1] for ci in cal_vessel_error_cis]))
 
         results = {
-            "Overall Tissue Error Mean": overall_tissue_error_mean,
-            "Overall Tissue Error Std": overall_tissue_error_std,
-            "Overall Tissue Error CI": overall_tissue_error_ci,
-            "Overall Vessel Error Mean": overall_vessel_error_mean,
-            "Overall Vessel Error Std": overall_vessel_error_std,
-            "Overall Vessel Error CI": overall_vessel_error_ci,
-            "Overall Calibrated Tissue Error Mean": overall_cal_tissue_error_mean,
-            "Overall Calibrated Tissue Error Std": overall_cal_tissue_error_std,
-            "Overall Calibrated Tissue Error CI": overall_cal_tissue_error_ci,
-            "Overall Calibrated Vessel Error Mean": overall_cal_vessel_error_mean,
-            "Overall Calibrated Vessel Error Std": overall_cal_vessel_error_std,
-            "Overall Calibrated Vessel Error CI": overall_cal_vessel_error_ci
+            "Entire Phantom LSU Error Mean": overall_tissue_error_mean,
+            "Entire Phantom LSU Error Std": overall_tissue_error_std,
+            "Entire Phantom LSU Error CI": overall_tissue_error_ci,
+            "Vessels-only LSU Error Mean": overall_vessel_error_mean,
+            "Vessels-only LSU Error Std": overall_vessel_error_std,
+            "Vessels-only LSU Error CI": overall_vessel_error_ci,
+            "Entire Phantom Cal. LSU Error Mean": overall_cal_tissue_error_mean,
+            "Entire Phantom Cal. LSU Error Std": overall_cal_tissue_error_std,
+            "Entire Phantom Cal. LSU Error CI": overall_cal_tissue_error_ci,
+            "Vessels-only Cal. LSU Error Mean": overall_cal_vessel_error_mean,
+            "Vessels-only Cal. LSU Error Std": overall_cal_vessel_error_std,
+            "Vessels-only Cal. LSU Error CI": overall_cal_vessel_error_ci
         }
 
         if image_modality == "hsi":
@@ -284,12 +284,12 @@ if __name__ == "__main__":
             overall_vessel_fluence_error_ci = (np.mean([ci[0] for ci in vessel_fluence_error_cis]),
                                                np.mean([ci[1] for ci in vessel_fluence_error_cis]))
 
-            results["Overall Tissue Fluence Error Mean"] = overall_tissue_fluence_error_mean
-            results["Overall Tissue Fluence Error Std"] = overall_tissue_fluence_error_std
-            results["Overall Tissue Fluence Error CI"] = overall_tissue_fluence_error_ci
-            results["Overall Vessel Fluence Error Mean"] = overall_vessel_fluence_error_mean
-            results["Overall Vessel Fluence Error Std"] = overall_vessel_fluence_error_std
-            results["Overall Vessel Fluence Error CI"] = overall_vessel_fluence_error_ci
+            results["Entire Phantom Fluence Comp. Error Mean"] = overall_tissue_fluence_error_mean
+            results["Entire Phantom Fluence Comp. Error Std"] = overall_tissue_fluence_error_std
+            results["Entire Phantom Fluence Comp. Error CI"] = overall_tissue_fluence_error_ci
+            results["Vessels-only Fluence Comp. Error Mean"] = overall_vessel_fluence_error_mean
+            results["Vessels-only Fluence Comp. Error Std"] = overall_vessel_fluence_error_std
+            results["Vessels-only Fluence Comp. Error CI"] = overall_vessel_fluence_error_ci
 
             print(results)
 
