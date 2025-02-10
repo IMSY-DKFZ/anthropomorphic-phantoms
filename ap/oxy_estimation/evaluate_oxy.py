@@ -371,4 +371,4 @@ if __name__ == "__main__":
             plt.close()
 
         with open(os.path.join(results_folder, f"{image_modality}_results.json"), "w") as json_file:
-            json.dump(results, json_file)
+            json.dump(results, json_file, indent=4)

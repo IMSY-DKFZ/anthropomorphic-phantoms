@@ -120,7 +120,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         os.makedirs(os.path.dirname(json_path), exist_ok=True)
 
         json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
-                  open(json_path, "w"))
+                  open(json_path, "w"), indent=4)
 
         p_value_for_legend = f"p-value={p_value:.2f}" if p_value > 0.01 else f"p-value<0.01"
         unmixed_result = unmix_so2_proxy(

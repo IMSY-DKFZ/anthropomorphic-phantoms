@@ -73,7 +73,7 @@ for forearm_nr, forearm_specs in examples_images.items():
     os.makedirs(os.path.dirname(json_path), exist_ok=True)
 
     json.dump({"slope": slope, "intercept": intercept, "r_value": r_value, "p_value": p_value, "std_err": std_err},
-              open(json_path, "w"))
+              open(json_path, "w"), indent=4)
     print(f"Slope: {slope:.2f}, Intercept: {intercept:.2f}, R-value: {r_value:.2f}, "
           f"p-value: {p_value:.2f}, Std Error: {std_err:.2f}")
 
