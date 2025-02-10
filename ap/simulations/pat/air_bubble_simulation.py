@@ -93,11 +93,13 @@ for f_idx, (forearm_nr, forearm_path) in enumerate(forearm_dict.items()):
             save_path = os.path.join(base_path, "PAT_Data", f"Phantom_0{f_idx + 1}", "Simulations",
                                      forearm_path.replace("-labels.nrrd", ".hdf5"))
 
+    results_path = os.path.join(base_path, "Paper_Results", "PAT_Simulations",
+                                f"Phantom_0{f_idx + 1}")
+    os.makedirs(results_path, exist_ok=True)
     visualize_comparison(simulation_path=save_path,
                          forearm_nr=forearm_nr,
                          wavelengths=wavelengths,
                          comparison_dict={"short": "air",
                                           "description": "air bubbles"},
                          save_fig=not VISUALIZE,
-                         results_path=os.path.join(
-                             base_path, "Paper_Results", "PAT_Simulations", f"Phantom_0{f_idx + 1}"))
+                         results_path=results_path)
