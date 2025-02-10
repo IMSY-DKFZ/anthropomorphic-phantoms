@@ -27,7 +27,7 @@ for coefficient, desc, name in zip(["mua", "mus"], ["mu_a", "mu_s"], ["Absorptio
     if coefficient == "mua":
         plt.figure(figsize=(4, 5))
     else:
-        plt.figure(figsize=(6, 5))
+        fig = plt.figure(figsize=(6, 5))
     for file in spectrum_files:
         phantom_name = os.path.basename(file).split(".")[0]
         data_dict = load_iad_results(file_path=file)
@@ -64,7 +64,7 @@ for coefficient, desc, name in zip(["mua", "mus"], ["mu_a", "mu_s"], ["Absorptio
         plt.ylabel(f"{name} coefficient $\{desc}$ [$cm^{{-1}}$]")
         plt.xlabel("Wavelength [nm]")
         if coefficient == "mus":
-            plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=8, fancybox=True, frameon=True, framealpha=0.5)
+            plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=8, fancybox=True, frameon=False, framealpha=0.5)
 
     plt.tight_layout()
     save_path = os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_{name}.png")

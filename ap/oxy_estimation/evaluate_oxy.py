@@ -342,11 +342,8 @@ if __name__ == "__main__":
             ax1.fill_between(depths, mean_depth_tissue_fluence_error - std_depth_tissue_fluence_error,
                              mean_depth_tissue_fluence_error + std_depth_tissue_fluence_error, color='violet', alpha=0.3)
             ax1.set_ylabel("Error (phantom) [%]")
-            ax1.yaxis.set_label_coords(-0.06, 0.5)
+            fig.legend(loc='upper center', ncol=5, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.04))
             ax1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove x-ticks
-
-            ax1.legend()
-            ax1.set_title("Error vs. depth")
 
             # Subplot 2: Vessel Errors
             ax2.plot(depths, mean_depth_vessel_error, label='Oxy Error (Vessels)', color='blue')
