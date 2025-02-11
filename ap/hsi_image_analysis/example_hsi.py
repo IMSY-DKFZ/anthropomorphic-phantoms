@@ -115,5 +115,5 @@ for forearm_nr, forearm_specs in examples_images.items():
     save_path = os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
                              f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png")
     plt.savefig(save_path,
-                bbox_inches="tight", pad_inches=0, dpi=300)
+                bbox_inches="tight", pad_inches=0, dpi=400)
     plt.close()

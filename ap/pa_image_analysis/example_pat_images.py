@@ -66,6 +66,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         label = oxy_dict[forearm_specs["oxy"]]
         training_labels[training_labels != label] = 0
         training_labels[training_labels == label] = 1
+        training_labels[80:, :] = 0
 
         reconstruction = sp.load_data_field(path, sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
         reconstruction_array = np.stack([np.rot90(reconstruction[str(wl)][:, :, ...], 3) for wl in wavelengths])
@@ -162,5 +163,5 @@ for forearm_nr, forearm_specs in examples_images.items():
         save_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
                                  f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png")
         plt.savefig(save_path,
-                    bbox_inches="tight", pad_inches=0, dpi=300)
+                    bbox_inches="tight", pad_inches=0, dpi=400)
         plt.close()
