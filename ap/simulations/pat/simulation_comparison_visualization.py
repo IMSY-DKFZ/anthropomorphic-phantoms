@@ -11,6 +11,8 @@ from simpa import Tags
 from ap.utils.dye_tissue_properties import seg_dict
 from ap.dye_analysis import DyeColors
 from ap.utils.maximum_x_percent_values import top_x_percent_indices
+plt.rcParams.update({'font.size': 12,
+                     "font.family": "serif"})
 
 
 def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.ndarray,
@@ -77,7 +79,7 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
 
         fig = plt.figure(figsize=(9, 7))
         ax1 = plt.subplot(2, 2, 1)
-        img = plt.imshow(orig_recon_array[0])
+        img = plt.imshow(np.fliplr(orig_recon_array[0]))
         plt.title(f"Simulation without {comparison_dict['description']}")
         ax = plt.gca()
         ax.axes.xaxis.set_visible(False)
@@ -89,7 +91,7 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
         plt.colorbar(img, cax=cax, orientation="vertical")
 
         ax2 = plt.subplot(2, 2, 2)
-        plt.imshow(compare_recon_array[0])
+        plt.imshow(np.fliplr(compare_recon_array[0]))
         plt.title(f"Simulation with {comparison_dict['description']}")
         ax = plt.gca()
         ax.axes.xaxis.set_visible(False)
@@ -114,8 +116,13 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
                     break
 
                 plot_color = DyeColors["B9" + str(int(10 * seg_dict[vessel_label]))] if vessel_label < 8 else "r"
-                for axis in [ax1, ax2]:
-                    axis.contour(vessel_label_mask, colors=plot_color, alpha=0.5, linewidths=0.5)
+                for ax_idx, axis in enumerate([ax1, ax2]):
+                    CS = axis.contour(np.fliplr(vessel_label_mask), colors=plot_color, alpha=0.5, linewidths=0.5,
+                                      linestyles="--" if ax_idx == 1 else "-")
+                    if ax_idx == 1:
+                        for coll in CS.collections:
+                            coll.set_linestyle((0, (8, 5)))
+
 
                 indices = top_x_percent_indices(simulation[0], vessel_label_mask, 5)
 
@@ -138,10 +145,10 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
                 #                  vessel_spectrum + vessel_std,
                 #                  alpha=0.2)
         plt.legend()
-
+        plt.tight_layout()
         if save_fig:
             plt.savefig(os.path.join(results_path, f"{forearm_nr}_{short_description}.png"),
-                        bbox_inches='tight', pad_inches=0)
+                        bbox_inches='tight', pad_inches=0, dpi=400)
         else:
             plt.show()
 
