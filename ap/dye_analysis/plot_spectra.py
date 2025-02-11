@@ -17,7 +17,7 @@ if run_by_bash:
     base_path = os.environ["BASE_PATH"]
 else:
     # In case the script is run from an IDE, the base path has to be set manually
-    base_path = "/home/kris/Data/Dye_project/publication_data_with_results"
+    base_path = ""
 
 spectrum_files = sorted(glob.glob(os.path.join(base_path, "Measured_Spectra", "*.npz")))
 
