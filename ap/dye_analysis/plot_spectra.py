@@ -17,17 +17,24 @@ if run_by_bash:
     base_path = os.environ["BASE_PATH"]
 else:
     # In case the script is run from an IDE, the base path has to be set manually
-    base_path = ""
+    base_path = "/home/kris/Data/Dye_project/publication_data_with_results"
 
 spectrum_files = sorted(glob.glob(os.path.join(base_path, "Measured_Spectra", "*.npz")))
 
 excluded_phantoms = [f"BF{i}" for i in range(1, 10)] + ["BF10A", "BF10B", "BF10C", "BIR", "B90", "B93", "B95", "B97"]
 
+draft_version = False
 for coefficient, desc, name in zip(["mua", "mus"], ["mu_a", "mu_s"], ["Absorption", "Scattering"]):
-    if coefficient == "mua":
-        plt.figure(figsize=(4, 5))
+    if draft_version and coefficient == "mua":
+        fig = plt.figure(figsize=(10, 5))
+        plt.subplot(1, 2, 1)
+    elif draft_version and coefficient == "mus":
+        plt.subplot(1, 2, 2)
     else:
-        fig = plt.figure(figsize=(6, 5))
+        if coefficient == "mua":
+            plt.figure(figsize=(4, 5))
+        else:
+            fig = plt.figure(figsize=(6, 5))
     for file in spectrum_files:
         phantom_name = os.path.basename(file).split(".")[0]
         data_dict = load_iad_results(file_path=file)
@@ -67,9 +74,15 @@ for coefficient, desc, name in zip(["mua", "mus"], ["mu_a", "mu_s"], ["Absorptio
             plt.legend(loc="upper left", bbox_to_anchor=(1.05, 1), fontsize=8, fancybox=True, frameon=False, framealpha=0.5)
 
     plt.tight_layout()
-    save_path = os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_{name}.png")
+    if draft_version:
+        save_path = os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_draft.png")
+    else:
+        save_path = os.path.join(base_path, "Paper_Results", "Plots", f"All_Spectra_{name}.png")
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    plt.savefig(save_path,
-                dpi=300, bbox_inches="tight")
-    plt.close()
+    if not draft_version:
+        plt.savefig(save_path,
+                    dpi=300, bbox_inches="tight")
+plt.savefig(save_path,
+            dpi=300, bbox_inches="tight")
+plt.close()
     # plt.show()
