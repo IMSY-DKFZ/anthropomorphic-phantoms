@@ -115,14 +115,19 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
                 if (vessel_label_mask == 0).all():
                     break
 
-                plot_color = DyeColors["B9" + str(int(10 * seg_dict[vessel_label]))] if vessel_label < 8 else "r"
+                if vessel_label == 4:
+                    plot_color = "b"
+                elif vessel_label == 8:
+                    plot_color = "r"
+                else:
+                    dye_color_string = "B9" + str(int(10 * seg_dict[vessel_label]))
+                    plot_color = DyeColors[dye_color_string]
                 for ax_idx, axis in enumerate([ax1, ax2]):
                     CS = axis.contour(np.fliplr(vessel_label_mask), colors=plot_color, alpha=0.5, linewidths=0.5,
                                       linestyles="--" if ax_idx == 1 else "-")
                     if ax_idx == 1:
                         for coll in CS.collections:
                             coll.set_linestyle((0, (8, 5)))
-
 
                 indices = top_x_percent_indices(simulation[0], vessel_label_mask, 5)
 
