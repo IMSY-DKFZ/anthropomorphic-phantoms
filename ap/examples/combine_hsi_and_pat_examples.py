@@ -32,8 +32,8 @@ def combine_two_pngs(path1, path2, output_path=None):
 
 if __name__ == '__main__':
     base_path = ""
-    pat_examples = sorted(glob.glob(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation", "*.png")))
-    hsi_examples = sorted(glob.glob(os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation", "*.png")))
+    pat_examples = sorted(glob.glob(os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation", "PAT_spectrum*.png")))
+    hsi_examples = sorted(glob.glob(os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation", "HSI_spectrum*.png")))
     for pat_example, hsi_example, oxy in zip(pat_examples, hsi_examples, [0, 100, 30, 50, 70]):
         combine_two_pngs(pat_example, hsi_example, output_path=os.path.join(base_path, "Paper_Results", "Plots",
                                                                             f"oxy_{oxy}_comparison.png"))
