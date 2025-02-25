@@ -17,10 +17,12 @@ python3 pa_image_analysis/plot_laser_energies.py
 
 python3 pa_image_analysis/example_pat_images.py
 python3 hsi_image_analysis/example_hsi.py
+python3 utils/generate_correlation_results_table.py
 
 python3 oxy_estimation/estimate_oxy_hsi.py
 python3 oxy_estimation/estimate_oxy_pa.py
 python3 oxy_estimation/evaluate_oxy.py
+python3 oxy_estimation/generate_oxy_results_table.py
 
 # For the supplementary material, we ran some simulations
 # To rerun the simulations, set RUN_SIMULATION="True".
