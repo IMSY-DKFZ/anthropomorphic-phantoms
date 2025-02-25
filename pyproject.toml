@@ -25,7 +25,8 @@ dependencies = [
     "simpa",
     "pynrrd",
     "patato",
-    "lazy-imports==0.3.1"
+    "lazy-imports==0.3.1",
+    "latextable"
 ]
 
 [tool.setuptools.packages.find]

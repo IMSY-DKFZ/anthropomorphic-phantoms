@@ -105,8 +105,8 @@ def check_for_vessel_diameter_changes(simulation_path: str, forearm_nr: str,
         # plt.colorbar(img, cax=cax, orientation="vertical")
 
     if save_fig:
-        plt.savefig(os.path.join(results_path, f"{forearm_nr}_vessel_comparison.png"),
-                    bbox_inches="tight", pad_inches=0)
+        plt.savefig(os.path.join(results_path, f"{forearm_nr}_vessel_comparison.pdf"),
+                    dpi=400, bbox_inches="tight", pad_inches=0, transparent=False)
     else:
         plt.show()
 

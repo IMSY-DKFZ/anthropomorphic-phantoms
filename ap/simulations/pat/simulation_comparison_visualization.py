@@ -152,7 +152,7 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
         plt.legend()
         plt.tight_layout()
         if save_fig:
-            plt.savefig(os.path.join(results_path, f"{forearm_nr}_{short_description}.png"),
+            plt.savefig(os.path.join(results_path, f"{forearm_nr}_{short_description}.pdf"),
                         bbox_inches='tight', pad_inches=0, dpi=400)
         else:
             plt.show()
