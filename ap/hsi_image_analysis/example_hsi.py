@@ -46,14 +46,19 @@ for forearm_nr, forearm_specs in examples_images.items():
     if len(training_labels.shape) == 3:
         training_labels = training_labels[:, :, 0]
 
-    fig, axes = plt.subplots(2, 1, figsize=(8, 7))
+    if forearm_nr == 1:
+        fig, axes = plt.subplots(1, 1, figsize=(4, 3))
+        axes = (axes, )
+    else:
+        fig, axes = plt.subplots(2, 1, figsize=(8, 7))
+        axes[0].set_title('Image and ROI boundaries')
+
     axes[0].imshow(rgb)
     axes[0].imshow(labels, alpha=0.2)
     axes[0].contour(training_labels)
     axes[0].axes.xaxis.set_visible(False)
     axes[0].axes.yaxis.set_visible(False)
 
-    axes[0].set_title('Image and ROI boundaries')
     vessel = - np.log10(hsi[training_labels == 3])
     vessel_spectrum = np.mean(vessel, axis=0)
     vessel_std = np.std(vessel, axis=0)
@@ -80,6 +85,15 @@ for forearm_nr, forearm_specs in examples_images.items():
     p_value_for_legend = f"p-value={p_value:.2f}" if p_value > 0.01 else f"p-value<0.01"
     unmixed_result = unmix_so2_proxy(
         absorption * slope + intercept, wavelengths=wavelengths, path_to_spectra=measurements_path)
+
+    if forearm_nr == 1:
+        save_path = os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
+                                 f"HSI_example_image.pdf")
+        plt.savefig(save_path,
+                    bbox_inches="tight", pad_inches=0, dpi=400)
+        plt.close()
+        fig, axes = plt.subplots(1, 1, figsize=(8, 4))
+        axes = (None, axes)
 
     axes[1].set_title(
         f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
@@ -113,7 +127,7 @@ for forearm_nr, forearm_specs in examples_images.items():
     fig.tight_layout()
 
     save_path = os.path.join(base_path, "Paper_Results", "HSI_Measurement_Correlation",
-                             f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.png")
+                             f"HSI_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}.pdf")
     plt.savefig(save_path,
                 bbox_inches="tight", pad_inches=0, dpi=400)
     plt.close()
