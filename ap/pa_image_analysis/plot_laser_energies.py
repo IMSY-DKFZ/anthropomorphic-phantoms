@@ -82,7 +82,7 @@ for plot_idx in range(1, 3):
     # plt.title(f'Laser energy distribution {"all" if plot_idx == 1 else "day 1 and day 2"}')
     plt.legend()
 # plt.show()
-save_path = os.path.join(base_path, "Paper_Results/Plots/laser_energies.png")
+save_path = os.path.join(base_path, "Paper_Results/Plots/laser_energies.pdf")
 os.makedirs(os.path.dirname(save_path), exist_ok=True)
 plt.savefig(save_path,
-            dpi=300, bbox_inches="tight")
+                    dpi=400, bbox_inches="tight", pad_inches=0, transparent=False)
