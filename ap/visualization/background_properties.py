@@ -77,13 +77,16 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
     scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), scatter_std)
 
     if f_idx in [0, 3, 6, 9]:
-        plt.figure(figsize=(11, 4))
+        fig = plt.figure(figsize=(11, 4))
         ax1 = plt.subplot(1, 2, 1)
         ax2 = plt.subplot(1, 2, 2)
-        ax1.set_title("Absorption")
-        ax2.set_title("Scattering (g=0.7)")
-        ax1.set_xlabel("Wavelength [nm]")
-        ax2.set_xlabel("Wavelength [nm]")
+        ax1.set_xlabel(r"Wavelength [nm]"
+                       "\n"
+                       "(a)")
+        ax2.set_xlabel("Wavelength [nm]"
+                       "\n"
+                       "(b)"
+                       )
         ax1.set_ylabel("Absorption coefficient [cm⁻¹]")
         ax2.set_ylabel("Scattering coefficient [cm⁻¹]")
 
@@ -96,7 +99,7 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
                      alpha=color_dict["alpha"][fore_dict["bvf"]]/2)
 
     ax2.plot(unmixing_wavelengths, scatter_spectrum,
-             label=f"Forearm {fore_nr}: bvf: {fore_dict['bvf']}%, oxy: {fore_dict['oxy']}%",
+             # label=f"Forearm {fore_nr}: bvf: {fore_dict['bvf']}%, oxy: {fore_dict['oxy']}%",
              color=color_dict["color"][fore_dict["oxy"]],
              alpha=color_dict["alpha"][fore_dict["bvf"]])
     ax2.fill_between(unmixing_wavelengths, scatter_spectrum - scatter_std, scatter_spectrum + scatter_std,
@@ -104,10 +107,11 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
                      alpha=color_dict["alpha"][fore_dict["bvf"]]/2)
 
     if f_idx in [2, 5, 8, 11]:
-        ax1.legend(fancybox=True, framealpha=0)
-        ax2.legend(fancybox=True, framealpha=0)
-        save_path = os.path.join(base_path, "Paper_Results", "Plots", f"forearms_{f_idx-1}_{f_idx+1}.png")
+        fig.legend(loc='upper center', ncol=3, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.01))
+        # ax2.legend(fancybox=True, framealpha=0)
+        save_path = os.path.join(base_path, "Paper_Results", "Plots", f"forearms_{f_idx-1}_{f_idx+1}.pdf")
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        # plt.tight_layout()
         plt.savefig(save_path,
-                    dpi=400, transparent=False)
+                    dpi=400, bbox_inches="tight", pad_inches=0, transparent=False)
         plt.close()

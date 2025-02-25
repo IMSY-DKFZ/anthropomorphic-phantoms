@@ -48,9 +48,9 @@ deoxy_scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_d
 
 
 
-fig = plt.figure(figsize=(5, 4))
-plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO2", color="red", linestyle="--")
-plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="HbO2 dye (IR-1061)", color="red")
+fig = plt.figure(figsize=(8, 3))
+plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO$_{2}$", color="red", linestyle="--")
+plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="HbO$_{2}$ dye (IR-1061)", color="red")
 plt.fill_between(unmixing_wavelengths, oxy_absorption_spectrum - oxy_absorption_std,
                  oxy_absorption_spectrum + oxy_absorption_std, color="red", alpha=0.1)
 
@@ -61,27 +61,33 @@ plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum - deoxy_absorpt
 
 plt.ylabel("Absorption coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
-fig.legend(loc='upper center', ncol=2, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.01))
-
-# plt.subplot(1, 2, 2)
-# plt.plot(unmixing_wavelengths, blood_scatter, label="Blood", color="red")
-# plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="IR-1061", color=DyeColors["B30"])
-# plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
-#                  oxy_scatter_spectrum + oxy_scatter_std, color=DyeColors["B30"], alpha=0.25)
-# plt.plot(unmixing_wavelengths, deoxy_scatter_spectrum, label="Spectrasense-765", color="teal")
-# plt.fill_between(unmixing_wavelengths, deoxy_scatter_spectrum - deoxy_scatter_std,
-#                  deoxy_scatter_spectrum + deoxy_scatter_std, color="teal", alpha=0.25)
-#
-# plt.ylabel("Scattering coefficient $\mu_s$ [$cm^{-1}$]")
-# plt.xlabel("Wavelength [nm]")
-# plt.legend(fancybox=True, framealpha=0)
-
-
-save_path = os.path.join(base_path, "Paper_Results", "Plots", "blood.png")
+fig.legend(loc='upper center', ncol=4, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.01))
+save_path = os.path.join(base_path, "Paper_Results", "Plots", "blood_abs.pdf")
 os.makedirs(os.path.dirname(save_path), exist_ok=True)
 plt.savefig(save_path,
             dpi=400, bbox_inches="tight", pad_inches=0, transparent=False)
 # plt.show()
 plt.close()
 
+# plt.subplot(1, 2, 2)
+fig = plt.figure(figsize=(5, 4))
+# plt.plot(unmixing_wavelengths, blood_scatter, label="Blood", color="red", linestyle="--")
+plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="HbO$_{2}$ dye (IR-1061)", color="red")
+plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
+                 oxy_scatter_spectrum + oxy_scatter_std, color="red", alpha=0.25)
+plt.plot(unmixing_wavelengths, deoxy_scatter_spectrum, label="Spectrasense-765", color="teal")
+plt.fill_between(unmixing_wavelengths, deoxy_scatter_spectrum - deoxy_scatter_std,
+                 deoxy_scatter_spectrum + deoxy_scatter_std, color="teal", alpha=0.25)
+
+plt.ylabel("Scattering coefficient $\mu_s$ [$cm^{-1}$]")
+plt.xlabel("Wavelength [nm]")
+fig.legend(loc='upper center', ncol=4, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.01))
+# plt.legend(fancybox=True, framealpha=0)
+
+save_path = os.path.join(base_path, "Paper_Results", "Plots", "blood_scat.pdf")
+os.makedirs(os.path.dirname(save_path), exist_ok=True)
+plt.savefig(save_path,
+            dpi=400, bbox_inches="tight", pad_inches=0, transparent=False)
+# plt.show()
+plt.close()
 
