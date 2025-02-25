@@ -71,8 +71,12 @@ for forearm_nr, forearm_specs in examples_images.items():
         reconstruction = sp.load_data_field(path, sp.Tags.DATA_FIELD_RECONSTRUCTED_DATA)
         reconstruction_array = np.stack([np.rot90(reconstruction[str(wl)][:, :, ...], 3) for wl in wavelengths])
 
-        fig = plt.figure(figsize=(8, 7))
-        plt.subplot(2, 1, 1)
+        if forearm_nr == 1:
+            fig = plt.figure(figsize=(4, 3))
+        else:
+            fig = plt.figure(figsize=(8, 7))
+            plt.subplot(2, 1, 1)
+            plt.title('Image and ROI boundaries')
         im = plt.imshow(reconstruction_array[0], vmin=0, vmax=43.3)
         ax = plt.gca()
         ax.axes.xaxis.set_visible(False)
@@ -80,7 +84,6 @@ for forearm_nr, forearm_specs in examples_images.items():
         scalebar = ScaleBar(0.1, "mm")
         ax.add_artist(scalebar)
         plt.contour(training_labels)
-        plt.title('Image and ROI boundaries')
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="2%", pad=0.05)
         plt.colorbar(im, cax=cax, orientation="vertical")
@@ -127,7 +130,15 @@ for forearm_nr, forearm_specs in examples_images.items():
         unmixed_result = unmix_so2_proxy(
             vessel_spectrum * slope + intercept, wavelengths=wavelengths, path_to_spectra=measurements_path)
 
-        plt.subplot(2, 1, 2)
+        if forearm_nr == 1:
+            save_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
+                                     f"PAT_example_image.pdf")
+            plt.savefig(save_path,
+                        bbox_inches="tight", pad_inches=0, dpi=400)
+            plt.close()
+            fig = plt.figure(figsize=(8, 4))
+        else:
+            plt.subplot(2, 1, 2)
 
         plt.title(
             f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
@@ -161,7 +172,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         fig.tight_layout()
 
         save_path = os.path.join(base_path, "Paper_Results", "PAT_Measurement_Correlation",
-                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.png")
+                                 f"PAT_spectrum_correlation_oxy_{int(100*forearm_specs['oxy']):0d}_p{p_idx}.pdf")
         plt.savefig(save_path,
                     bbox_inches="tight", pad_inches=0, dpi=400)
         plt.close()
