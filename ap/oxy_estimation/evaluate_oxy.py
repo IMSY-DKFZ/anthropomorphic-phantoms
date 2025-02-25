@@ -366,7 +366,7 @@ if __name__ == "__main__":
             plt.tight_layout()
             plt.subplots_adjust(hspace=0.2)  # Adjust this value as needed for spacing between subplots
             # plt.show()
-            plt.savefig(os.path.join(results_folder, f"{image_modality}_depth_error.png"), dpi=300,
+            plt.savefig(os.path.join(results_folder, f"{image_modality}_depth_error.pdf"), dpi=300,
                         bbox_inches='tight')
             plt.close()
 
