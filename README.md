@@ -2,8 +2,8 @@
 
 ![Concept](resources/concept_figure.png)
 
-This repository contains code for the paper "Anthropomorphic tissue-mimicking phantoms for oximetry validation based on 
-multispectral optical imaging", see [Paper](TODO) that was published in the Journal of Biomedical Optics 2025.
+This repository contains code for the paper "Anthropomorphic tissue-mimicking phantoms for oximetry validation in 
+multispectral optical imaging".
 As Python package, it provides functionalities for photoacoustic (PA) imaging and hyperspectral imaging (HSI).
 The package includes the following functionalities:
 
