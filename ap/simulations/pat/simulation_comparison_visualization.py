@@ -89,6 +89,7 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="2%", pad=0.05)
         plt.colorbar(img, cax=cax, orientation="vertical")
+        plt.xlabel("[a.u.]")
 
         ax2 = plt.subplot(2, 2, 2)
         plt.imshow(np.fliplr(compare_recon_array[0]))
@@ -101,6 +102,8 @@ def visualize_comparison(simulation_path: str, forearm_nr: str, wavelengths: np.
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="2%", pad=0.05)
         plt.colorbar(img, cax=cax, orientation="vertical")
+        plt.xlabel("[a.u.]")
+
 
         plt.subplot(2, 1, 2)
         plt.ylabel("Normalized spectrum [a.u.]")

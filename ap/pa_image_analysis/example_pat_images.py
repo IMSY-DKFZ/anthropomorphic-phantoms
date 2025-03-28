@@ -87,6 +87,7 @@ for forearm_nr, forearm_specs in examples_images.items():
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="2%", pad=0.05)
         plt.colorbar(im, cax=cax, orientation="vertical")
+        plt.xlabel("[a.u.]", labelpad=6)
 
         if roi in [100, 0]:
             vessel = reconstruction_array[:, training_labels == 1]
@@ -141,11 +142,12 @@ for forearm_nr, forearm_specs in examples_images.items():
             plt.subplot(2, 1, 2)
 
         plt.title(
-            f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
-            f"{unmixed_result:.2f} %")
+            f"Target spectrum (sO$_2$: {int(100 * forearm_specs['oxy']):d}%) with unmixed sO$_2$: "
+            f"{int(100*unmixed_result):d} %")
         plt.ylabel("Absorption coefficient [$cm^{-1}$]")
         plt.xlabel("Photoacoustic signal [a.u.]")
         plt.scatter(vessel_spectrum, target_spectrum, color="green", label=f"Measured PA signal")
+        # plt.errorbar(vessel_spectrum, target_spectrum, xerr=vessel_std, yerr=target_std, fmt="o", linestyle="", capsize=4, color="green", label=f"Measured PA signal")
         plt.plot(vessel_spectrum, vessel_spectrum * slope + intercept, color="black",
                  label=f"Correlation (R={r_value:.2f}, {p_value_for_legend})")
 

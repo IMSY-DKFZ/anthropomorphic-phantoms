@@ -46,18 +46,19 @@ deoxy_absorption_std = np.interp(unmixing_wavelengths, np.arange(650, 950), deox
 deoxy_scatter_spectrum = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data["mus"])
 deoxy_scatter_std = np.interp(unmixing_wavelengths, np.arange(650, 950), deoxy_data["mus_std"])
 
-
+print(f"MAE of Hb proxy: {np.mean(np.abs(hb_spectrum - deoxy_absorption_spectrum))}")
+print(f"MAE of HbO2 proxy: {np.mean(np.abs(hbo2_spectrum - oxy_absorption_spectrum))}")
 
 fig = plt.figure(figsize=(8, 3))
 plt.plot(unmixing_wavelengths, hbo2_spectrum, label="HbO$_{2}$", color="red", linestyle="--")
 plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="HbO$_{2}$ dye (IR-1061)", color="red")
 plt.fill_between(unmixing_wavelengths, oxy_absorption_spectrum - oxy_absorption_std,
-                 oxy_absorption_spectrum + oxy_absorption_std, color="red", alpha=0.1)
+                 oxy_absorption_spectrum + oxy_absorption_std, color="red", alpha=0.4)
 
 plt.plot(unmixing_wavelengths, hb_spectrum, label="Hb", color="teal", linestyle="--")
 plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum, label="Hb-dye (Spectrasense-765)", color="teal")
 plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum - deoxy_absorption_std,
-                 deoxy_absorption_spectrum + deoxy_absorption_std, color="teal", alpha=0.1)
+                 deoxy_absorption_spectrum + deoxy_absorption_std, color="teal", alpha=0.4)
 
 plt.ylabel("Absorption coefficient $\mu_a$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")
@@ -74,10 +75,10 @@ fig = plt.figure(figsize=(5, 4))
 # plt.plot(unmixing_wavelengths, blood_scatter, label="Blood", color="red", linestyle="--")
 plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="HbO$_{2}$ dye (IR-1061)", color="red")
 plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
-                 oxy_scatter_spectrum + oxy_scatter_std, color="red", alpha=0.25)
+                 oxy_scatter_spectrum + oxy_scatter_std, color="red", alpha=0.4)
 plt.plot(unmixing_wavelengths, deoxy_scatter_spectrum, label="Spectrasense-765", color="teal")
 plt.fill_between(unmixing_wavelengths, deoxy_scatter_spectrum - deoxy_scatter_std,
-                 deoxy_scatter_spectrum + deoxy_scatter_std, color="teal", alpha=0.25)
+                 deoxy_scatter_spectrum + deoxy_scatter_std, color="teal", alpha=0.4)
 
 plt.ylabel("Scattering coefficient $\mu_s$ [$cm^{-1}$]")
 plt.xlabel("Wavelength [nm]")

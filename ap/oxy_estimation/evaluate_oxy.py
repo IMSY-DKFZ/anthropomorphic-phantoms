@@ -332,31 +332,32 @@ if __name__ == "__main__":
             depths = np.arange(mean_depth_tissue_error.shape[0]) * 0.1  # Depth range
 
             # Subplot 1: Whole Tissue Errors
-            ax1.plot(depths, mean_depth_tissue_error, label='LSU', color='blue')
+            ax1.plot(depths, mean_depth_tissue_error, label='LSU', color='#3266FF')
             ax1.fill_between(depths, mean_depth_tissue_error - std_depth_tissue_error,
-                             mean_depth_tissue_error + std_depth_tissue_error, color='blue', alpha=0.3)
-            ax1.plot(depths, mean_depth_cal_tissue_error, label='Calibrated LSU', color='green')
+                             mean_depth_tissue_error + std_depth_tissue_error, color='#3266FF', alpha=0.3)
+            ax1.plot(depths, mean_depth_cal_tissue_error, label='Calibrated LSU', color='#3d9b44')
             ax1.fill_between(depths, mean_depth_cal_tissue_error - std_depth_cal_tissue_error,
-                             mean_depth_cal_tissue_error + std_depth_cal_tissue_error, color='green', alpha=0.3)
-            ax1.plot(depths, mean_depth_tissue_fluence_error, label='Fluence compensated', color='violet')
+                             mean_depth_cal_tissue_error + std_depth_cal_tissue_error, color='#3d9b44', alpha=0.3)
+            ax1.plot(depths, mean_depth_tissue_fluence_error, label='Fluence compensated', color='#ab3e9d')
             ax1.fill_between(depths, mean_depth_tissue_fluence_error - std_depth_tissue_fluence_error,
-                             mean_depth_tissue_fluence_error + std_depth_tissue_fluence_error, color='violet', alpha=0.3)
-            ax1.set_ylabel("Error (phantom) [%]")
+                             mean_depth_tissue_fluence_error + std_depth_tissue_fluence_error, color='#ab3e9d', alpha=0.3)
+            ax1.set_ylabel("$sO_2$ MAE [p.p.]")
             fig.legend(loc='upper center', ncol=5, frameon=False, fontsize="small", fancybox=True, bbox_to_anchor=(0.5, 1.04))
             ax1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)  # Remove x-ticks
+            ax1.text(0.1, 0.9, "entire phantom", transform=ax1.transAxes)
 
             # Subplot 2: Vessel Errors
-            ax2.plot(depths, mean_depth_vessel_error, label='Oxy Error (Vessels)', color='blue')
+            ax2.plot(depths, mean_depth_vessel_error, label='Oxy Error (Vessels)', color='#3266FF')
             ax2.fill_between(depths, mean_depth_vessel_error - std_depth_vessel_error,
-                             mean_depth_vessel_error + std_depth_vessel_error, color='blue', alpha=0.3)
-            ax2.plot(depths, mean_depth_cal_vessel_error, label='Cal Oxy Error (Vessels)', color='green')
+                             mean_depth_vessel_error + std_depth_vessel_error, color='#3266FF', alpha=0.3)
+            ax2.plot(depths, mean_depth_cal_vessel_error, label='Cal Oxy Error (Vessels)', color='#3d9b44')
             ax2.fill_between(depths, mean_depth_cal_vessel_error - std_depth_cal_vessel_error,
-                             mean_depth_cal_vessel_error + std_depth_cal_vessel_error, color='green', alpha=0.3)
-            ax2.plot(depths, mean_depth_vessel_fluence_error, label='Fluence Error (Vessels)', color='violet')
+                             mean_depth_cal_vessel_error + std_depth_cal_vessel_error, color='#3d9b44', alpha=0.3)
+            ax2.plot(depths, mean_depth_vessel_fluence_error, label='Fluence Error (Vessels)', color='#ab3e9d')
             ax2.fill_between(depths, mean_depth_vessel_fluence_error - std_depth_vessel_fluence_error,
-                             mean_depth_vessel_fluence_error + std_depth_vessel_fluence_error, color='violet', alpha=0.3)
-            ax2.set_ylabel("Error (vessels-only) [%]")
-            ax2.yaxis.set_label_coords(-0.06, 0.5)
+                             mean_depth_vessel_fluence_error + std_depth_vessel_fluence_error, color='#ab3e9d', alpha=0.3)
+            ax2.set_ylabel("$sO_2$ MAE [p.p.]")
+            ax2.text(0.1, 0.9, "vessels-only", transform=ax2.transAxes)
             # ax2.legend()
 
             # Shared x-axis label for the bottom plot

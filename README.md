@@ -36,11 +36,13 @@ Project Organization
 
 --------
 
-* [Getting started](#installation-and-setup)
+* [Getting started](#getting-started)
 * [Run experiments](#run-experiments)
 * [Custom dye optimisation](#custom-dye-optimisation)
 
-# Installation and setup
+# Getting started
+
+## Installation and setup
 To install this repository and its dependencies, you need to run the following commands:
 1. Make sure that you have your preferred virtual environment activated (we recommend Python 3.10) with 
     one of the following commands:

@@ -96,28 +96,28 @@ for forearm_nr, forearm_specs in examples_images.items():
         axes = (None, axes)
 
     axes[1].set_title(
-        f"Target spectrum (oxy={int(100 * forearm_specs['oxy']):d}%) with unmixed oxy: "
-        f"{unmixed_result:.2f} %")
+        f"Target spectrum (sO$_2$: {int(100 * forearm_specs['oxy']):d}%) with unmixed sO$_2$: "
+        f"{int(100 * unmixed_result):d} %")
     axes[1].set_xlabel(f"HS signal adapted with Lambert-Beer approx. [a.u.]")
-    axes[1].set_ylabel(f"Absorption coefficient [$cm^{-1}$]")
-    axes[1].scatter(absorption, target_spectrum, color="green", label=f"Measured HS signal")
+    axes[1].set_ylabel("Absorption coefficient [$cm^{-1}$]")
+    axes[1].scatter(absorption, target_spectrum, color="#337538", label=f"Measured HS signal")
     axes[1].plot(sorted(absorption), np.array(sorted(absorption)) * slope + intercept, color="black",
                  label=f"Correlation (R={r_value:.2f}, {p_value_for_legend})")
 
     ins = axes[1].inset_axes((0.7, 0.2, 0.2, 0.2))
-    ins.plot(wavelengths, absorption*slope + intercept, color="green")
-    ins.plot(wavelengths, target_spectrum, label="Measured material absorption", color="blue")
+    ins.plot(wavelengths, absorption*slope + intercept, color="#337538")
+    ins.plot(wavelengths, target_spectrum, label="Measured material absorption", color="#3266FF")
     ins.fill_between(wavelengths, target_spectrum - target_std,
                      target_spectrum + target_std,
-                     alpha=0.2, color="blue")
+                     alpha=0.2, color="#3266FF")
     ins.set_title("HSI approx. for $\mu_a$")
-    ins.set_ylabel(f"$\mu_a$ [$cm^{-1}$]")
+    ins.set_ylabel("$\mu_a$ [$cm^{-1}$]")
     ins.set_xlabel("Wavelength [nm]")
 
     lgd = plt.legend(loc="upper left")
     ax = lgd.axes
     handles, labels = ax.get_legend_handles_labels()
-    handles.append(Line2D(xdata=[0], ydata=[0], color="blue"))
+    handles.append(Line2D(xdata=[0], ydata=[0], color="#3266FF"))
     labels.append("Measured material absorption")
     lgd._legend_box = None
     lgd._init_legend_box(handles, labels)

@@ -56,26 +56,26 @@ fig = plt.figure(figsize=(10, 3.6))
 
 plt.subplot(1, 2, 1)
 
-plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum, label="0%: Mix 90:10", color="blue")
+plt.plot(unmixing_wavelengths, deoxy_absorption_spectrum, label="0% sO$_2$: Mix 90:10", color="blue")
 plt.fill_between(unmixing_wavelengths, deoxy_absorption_spectrum - deoxy_absorption_std,
                  deoxy_absorption_spectrum + deoxy_absorption_std, color="blue", alpha=0.1)
 
-plt.plot(unmixing_wavelengths, abs_spectrum_B93, label="30.7%: Mix 93:7", color=DyeColors["B93"],
+plt.plot(unmixing_wavelengths, abs_spectrum_B93, label="30.7% sO$_2$: Mix 93:7", color=DyeColors["B93"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, abs_spectrum_B93 - abs_spectrum_B93_std,
                  abs_spectrum_B93 + abs_spectrum_B93_std, color=DyeColors["B93"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, abs_spectrum_B95, label="52.4%: Mix 95:5", color=DyeColors["B95"],
+plt.plot(unmixing_wavelengths, abs_spectrum_B95, label="52.4% sO$_2$: Mix 95:5", color=DyeColors["B95"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, abs_spectrum_B95 - abs_spectrum_B95_std,
                  abs_spectrum_B95 + abs_spectrum_B95_std, color=DyeColors["B95"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, abs_spectrum_B97, label="67.4%: Mix 97:3", color=DyeColors["B97"],
+plt.plot(unmixing_wavelengths, abs_spectrum_B97, label="67.4% sO$_2$: Mix 97:3", color=DyeColors["B97"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, abs_spectrum_B97 - abs_spectrum_B97_std,
                  abs_spectrum_B97 + abs_spectrum_B97_std, color=DyeColors["B97"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="100%: HbO$_{2}$ dye", color="r")
+plt.plot(unmixing_wavelengths, oxy_absorption_spectrum, label="100% sO$_2$: HbO$_{2}$ dye", color="r")
 plt.fill_between(unmixing_wavelengths, oxy_absorption_spectrum - oxy_absorption_std,
                  oxy_absorption_spectrum + oxy_absorption_std, color="r", alpha=0.1)
 
@@ -87,26 +87,26 @@ fig.legend(loc='upper center', ncol=5, frameon=False, fontsize="small", fancybox
 
 plt.subplot(1, 2, 2)
 
-plt.plot(unmixing_wavelengths, deoxy_scatter_spectrum, label="0% oxy: Mix 90:10", color="blue")
+plt.plot(unmixing_wavelengths, deoxy_scatter_spectrum, label="0% sO$_2$: Mix 90:10", color="blue")
 plt.fill_between(unmixing_wavelengths, deoxy_scatter_spectrum - deoxy_scatter_std,
                  deoxy_scatter_spectrum + deoxy_scatter_std, color="blue", alpha=0.1)
 
-plt.plot(unmixing_wavelengths, scatter_spectrum_B93, label="30.7% oxy: Mix 93:7", color=DyeColors["B93"],
+plt.plot(unmixing_wavelengths, scatter_spectrum_B93, label="30.7% sO$_2$: Mix 93:7", color=DyeColors["B93"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, scatter_spectrum_B93 - scatter_spectrum_B93_std,
                  scatter_spectrum_B93 + scatter_spectrum_B93_std, color=DyeColors["B93"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, scatter_spectrum_B95, label="52.4% oxy: Mix 95:5", color=DyeColors["B95"],
+plt.plot(unmixing_wavelengths, scatter_spectrum_B95, label="52.4% sO$_2$: Mix 95:5", color=DyeColors["B95"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, scatter_spectrum_B95 - scatter_spectrum_B95_std,
                  scatter_spectrum_B95 + scatter_spectrum_B95_std, color=DyeColors["B95"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, scatter_spectrum_B97, label="67.4% oxy: Mix 97:3", color=DyeColors["B97"],
+plt.plot(unmixing_wavelengths, scatter_spectrum_B97, label="67.4% sO$_2$: Mix 97:3", color=DyeColors["B97"],
          linestyle="--")
 plt.fill_between(unmixing_wavelengths, scatter_spectrum_B97 - scatter_spectrum_B97_std,
                  scatter_spectrum_B97 + scatter_spectrum_B97_std, color=DyeColors["B97"], alpha=0.1)
 
-plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="100% oxy: HbO$_{2}$ dye", color="r")
+plt.plot(unmixing_wavelengths, oxy_scatter_spectrum, label="100 sO$_2$: HbO$_{2}$ dye", color="r")
 plt.fill_between(unmixing_wavelengths, oxy_scatter_spectrum - oxy_scatter_std,
                  oxy_scatter_spectrum + oxy_scatter_std, color="r", alpha=0.1)
 
@@ -125,8 +125,8 @@ plt.close()
 
 fig = plt.figure(figsize=(10, 3))
 for plt_idx, (oxy_level_name, label, color) in enumerate(zip(["90", "93", "95", "97", "100"],
-                                        ["0% oxy: Mix 90:10", "30.7% oxy: Mix 93:7", "52.4% oxy: Mix 95:5",
-                                         "67.4% oxy: Mix 97:3", "100% oxy: HbO$_{2}$ dye"],
+                                        ["0% sO$_2$: Mix 90:10", "30.7 sO$_2$: Mix 93:7", "52.4% sO$_2$: Mix 95:5",
+                                         "67.4% sO$_2$: Mix 97:3", "100% sO$_2$: HbO$_{2}$ dye"],
                                         ["blue", DyeColors["B93"], DyeColors["B95"], DyeColors["B97"], "red"])):
 
     data = load_total_refl_and_transmission(os.path.join(dye_spectra_dir, oxy_level_name))

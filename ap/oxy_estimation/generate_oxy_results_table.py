@@ -41,12 +41,12 @@ cal_lsu_row2 = (f"& [{100*pat_results['Entire Phantom Cal. LSU Error CI'][0]:.1f
                 f"[{100*hsi_results['Vessels-only Cal. LSU Error CI'][0]:.1f}, {100*hsi_results['Vessels-only Cal. LSU Error CI'][1]:.1f}] \\\\")
 
 fluence_comp_row1 = (f"\multirow{{2}}{{5em}}{{Fluence compensation}} & {100*pat_results['Entire Phantom Fluence Comp. Error Mean']:.1f}$\pm${100*pat_results['Entire Phantom Fluence Comp. Error Std']:.1f} & "
-                     f"{100*pat_results['Vessels-only Fluence Comp. Error Mean']:.1f}$\pm${100*pat_results['Vessels-only Fluence Comp. Error Std']:.1f} & "
+                     f"{100*pat_results['Vessels-only Fluence Comp. Error Mean']:.1f}$\pm${100*pat_results['Vessels-only Fluence Comp. Error Std']:.1f} &"
                      f" & "
                      f"\\\\")
 
 fluence_comp_row2 = (f"& [{100*pat_results['Entire Phantom Fluence Comp. Error CI'][0]:.1f}, {100*pat_results['Entire Phantom Fluence Comp. Error CI'][1]:.1f}] & "
-                     f"[{100*pat_results['Vessels-only Fluence Comp. Error CI'][0]:.1f}, {100*pat_results['Vessels-only Fluence Comp. Error CI'][1]:.1f}] & "
+                     f"[{100*pat_results['Vessels-only Fluence Comp. Error CI'][0]:.1f}, {100*pat_results['Vessels-only Fluence Comp. Error CI'][1]:.1f}] &"
                      f" & "
                      f"\\\\")
 
@@ -73,5 +73,6 @@ with open(outfile, "w") as f:
     f.write("\t \t" + cal_lsu_row1 + "\n")
     f.write("\t \t" + cal_lsu_row2 + "\n")
     f.write("\t \t" + "\hline" + "\n")
-    f.write("\t \t" + fluence_comp_row1 + "\n")
-    f.write("\t \t" + fluence_comp_row2 + "\n")
+    f.write("\t \t" + fluence_comp_row1.replace(" & & ",
+                                                " & \multicolumn{2}{c}{\multirow{2}{*}{not applicable}}") + "\n")
+    f.write("\t \t" + fluence_comp_row2.replace(" & & ", " & \multicolumn{2}{c}{} ") + "\n")

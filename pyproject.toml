@@ -36,4 +36,3 @@ include = ["*"]  # ["*"] by default
 [project.urls]
 Homepage = "https://github.com/IMSY-DKFZ/anthropomorphic-phantoms"
 Repository = "https://github.com/IMSY-DKFZ/anthropomorphic-phantoms"
-Paper = "DOI: LINK TODO"

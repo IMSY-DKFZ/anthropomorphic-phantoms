@@ -91,7 +91,7 @@ for f_idx, (fore_nr, fore_dict) in enumerate(background_spectra.items()):
         ax2.set_ylabel("Scattering coefficient [cm⁻¹]")
 
     ax1.plot(unmixing_wavelengths, absorption_spectrum,
-             label=f"Forearm {fore_nr}: bvf: {fore_dict['bvf']}%, oxy: {fore_dict['oxy']}%",
+             label=f"Forearm {fore_nr}: bvf: {fore_dict['bvf']}%, sO$_2$: {fore_dict['oxy']}%",
              color=color_dict["color"][fore_dict["oxy"]],
              alpha=color_dict["alpha"][fore_dict["bvf"]])
     ax1.fill_between(unmixing_wavelengths, absorption_spectrum - absorption_std, absorption_spectrum + absorption_std,
