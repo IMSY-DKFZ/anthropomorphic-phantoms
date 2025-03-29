@@ -52,7 +52,7 @@ To install this repository and its dependencies, you need to run the following c
 
 ## Download data
 
-The data needed to reproduce the paper results can be found here: TODO Link
+The data needed to reproduce the paper results can be found here: https://doi.org/10.5281/zenodo.15102333
 The folder called `publication_data` has the following structure:
 
 ------------
